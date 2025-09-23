@@ -1,7 +1,7 @@
 # Programacion-web-PetCare
 Proyecto de programación web
 
-## Comandos de git
+## Comandos de git (SIEMPRE DESDE EL DIRECTORIO DEL PROYECTO)
 
 ### Sincronizar datos locales a los del repositorio
 ```
