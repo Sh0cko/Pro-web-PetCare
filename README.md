@@ -8,7 +8,7 @@ Proyecto de programación web
 git pull origin main
 ```
 
-### Agregar cambios locales al repo
+### Agregar cambios locales de ficheros a tu copia del repo
 ```
 git add .
 ```
