@@ -1,8 +1,8 @@
 # Programacion-web-PetCare
 Proyecto de programación web
 
-## **Comandos de git (SIEMPRE DESDE EL DIRECTORIO DEL PROYECTO)**
-###  Descargar repo
+# **Comandos de git (SIEMPRE DESDE EL DIRECTORIO DEL PROYECTO)**
+##  Descargar repo
 Clonar repositorio
 ```
 git clone https://github.com/Sh0cko/Programacion-web-PetCare.git
@@ -15,7 +15,7 @@ Actualizar tu copia del repo (si alguien lo actualizó)
 ```
 git pull origin main
 ```
-### Subir cambios
+## Subir cambios
 
 ### Sincronizar datos locales a los del repositorio
 ```
