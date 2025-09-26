@@ -1,3 +1,5 @@
+# Cierra la sesión al cerrar el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 """
 Django settings for demo project.
 
