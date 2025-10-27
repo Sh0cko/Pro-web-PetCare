@@ -2,6 +2,12 @@
 Proyecto de programación web
 
 # **Comandos de git (SIEMPRE DESDE EL DIRECTORIO DEL PROYECTO)**
+
+## Requerimientos
+```
+pip install django pillow requests psycopg2-binary djangorestframework
+```
+
 ##  Descargar repo
 Clonar repositorio
 ```
