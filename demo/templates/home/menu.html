@@ -209,60 +209,116 @@
   <div class="main-header">
     Registro de Mascotas - Nuevos Pacientes
   </div>
-  <div class="main-content">
-    <div class="form-card">
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group">
-            <label>ID Mascota</label>
-            <input type="text" class="form-control" name="id_mascota" placeholder="ID de la mascota" value="{{ mascota.id|default:'' }}" required>
-          </div>
-          <div class="form-group">
-            <label>Nombre</label>
-            <input type="text" class="form-control" name="nombre" placeholder="Nombre de la mascota" value="{{ mascota.nombre|default:'' }}" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Especie</label>
-            <select class="form-select" name="especie" id="especie-select" required>
-              <option value="">Seleccionar especie</option>
-              <option value="Perro" {% if mascota.especie == 'Perro' %}selected{% endif %}>Perro</option>
-              <option value="Gato" {% if mascota.especie == 'Gato' %}selected{% endif %}>Gato</option>
-              <option value="Otro" {% if mascota.especie == 'Otro' %}selected{% endif %}>Otro</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Raza</label>
-            <select class="form-select" name="raza" id="raza-select" required>
-              <option value="">Seleccionar raza</optiorn>
-              {% for raza in razas_perro %}
-                <option value="{{ raza }}" {% if mascota.raza == raza %}selected{% endif %}>{{ raza }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Fecha de nacimiento</label>
-            <input type="date" class="form-control" name="nacimiento" value="{{ mascota.nacimiento|default:'' }}" required>
-          </div>
-          <div class="form-group">
-            <label>Propietario</label>
-            <input type="text" class="form-control" name="propietario" placeholder="Nombre del propietario" value="{{ mascota.propietario|default:'' }}" required>
-          </div>
-        </div>
-        <div class="action-btns">
-          <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i> Crear</button>
-          <button type="reset" class="btn btn-secondary"><i class="bi bi-eraser"></i> Limpiar</button>
-          <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i> Eliminar</button>
-          <button type="button" class="btn btn-info" style="color:white;"><i class="bi bi-arrow-left"></i> Regresar</button>
-          <button type="button" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Actualizar</button>
-        </div>
-      </form>
+  <div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    
+    <!-- SECCIÓN: DATOS DEL PROPIETARIO -->
+    <h5 class="mb-3" style="color: #06918f; border-bottom: 2px solid #06918f; padding-bottom: 8px;">
+      <i class="bi bi-person"></i> Datos del Propietario
+    </h5>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>ID Propietario *</label>
+        <input type="text" class="form-control" name="id_propietario" placeholder="Ej: PROP001" value="{{ mascota.propietario_id|default:'' }}" required>
+      </div>
+      <div class="form-group">
+        <label>Nombre Propietario *</label>
+        <input type="text" class="form-control" name="nombre_propietario" placeholder="Nombre completo" value="{{ mascota.nombre_propietario|default:'' }}" required>
+      </div>
     </div>
-    <div class="table-card">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="tel" class="form-control" name="telefono_propietario" placeholder="Ej: 123456789" value="{{ mascota.telefono_propietario|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-control" name="email_propietario" placeholder="ejemplo@email.com" value="{{ mascota.email_propietario|default:'' }}">
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group" style="flex: 2;">
+        <label>Dirección</label>
+        <input type="text" class="form-control" name="direccion_propietario" placeholder="Dirección completa" value="{{ mascota.direccion_propietario|default:'' }}">
+      </div>
+    </div>
+
+    <!-- SECCIÓN: DATOS DE LA MASCOTA -->
+    <h5 class="mb-3 mt-4" style="color: #06918f; border-bottom: 2px solid #06918f; padding-bottom: 8px;">
+      <i class="bi bi-heart"></i> Datos de la Mascota
+    </h5>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>ID Mascota *</label>
+        <input type="text" class="form-control" name="id_mascota" placeholder="ID de la mascota" value="{{ mascota.id|default:'' }}" required>
+      </div>
+      <div class="form-group">
+        <label>Nombre Mascota *</label>
+        <input type="text" class="form-control" name="nombre" placeholder="Nombre de la mascota" value="{{ mascota.nombre|default:'' }}" required>
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>Especie *</label>
+        <select class="form-select" name="especie" id="especie-select" required>
+          <option value="">Seleccionar especie</option>
+          <option value="Perro" {% if mascota.especie == 'Perro' %}selected{% endif %}>Perro</option>
+          <option value="Gato" {% if mascota.especie == 'Gato' %}selected{% endif %}>Gato</option>
+          <option value="Otro" {% if mascota.especie == 'Otro' %}selected{% endif %}>Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Raza *</label>
+        <select class="form-select" name="raza" id="raza-select" required>
+          <option value="">Seleccionar raza</option>
+          {% for raza in razas_perro %}
+            <option value="{{ raza }}" {% if mascota.raza == raza %}selected{% endif %}>{{ raza }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fecha de nacimiento *</label>
+        <input type="date" class="form-control" name="nacimiento" value="{{ mascota.nacimiento|default:'' }}" required>
+      </div>
+      <div class="form-group">
+        <label>Sexo *</label>
+        <select class="form-select" name="sexo" required>
+          <option value="">Seleccionar sexo</option>
+          <option value="M" {% if mascota.sexo == 'M' %}selected{% endif %}>Macho</option>
+          <option value="H" {% if mascota.sexo == 'H' %}selected{% endif %}>Hembra</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Color</label>
+        <input type="text" class="form-control" name="color" placeholder="Color de la mascota" value="{{ mascota.color|default:'' }}">
+      </div>
+    </div>
+
+    <div class="action-btns">
+      <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i> Crear</button>
+      <button type="reset" class="btn btn-secondary"><i class="bi bi-eraser"></i> Limpiar</button>
+      <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i> Eliminar</button>
+      <button type="button" class="btn btn-info" style="color:white;"><i class="bi bi-arrow-left"></i> Regresar</button>
+      <button type="button" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Actualizar</button>
+    </div>
+  </form>
+</div>
+        <div class="table-card">
+      <h5 class="mb-3" style="color: #06918f;">
+        <i class="bi bi-list"></i> Mascotas Registradas
+      </h5>
       <table class="table table-bordered table-hover">
         <thead>
           <tr>
@@ -271,21 +327,42 @@
             <th>Especie</th>
             <th>Raza</th>
             <th>Nacimiento</th>
+            <th>Sexo</th>
             <th>Propietario</th>
+            <th>Teléfono</th>
           </tr>
         </thead>
         <tbody>
-          <!--
-          <tr><td>1</td><td>luke</td><td>gato</td><td>de colores</td><td>24-Oct-24</td><td>alex</td></tr>
-          <tr><td>2</td><td>güero</td><td>gato</td><td>naranja</td><td>23-May-24</td><td>fresy</td></tr>
-          <tr><td>3</td><td>Bonita</td><td>Perro</td><td>Mixta</td><td>14-Jan-19</td><td>yo</td></tr>
-          <tr><td>4</td><td>lulu</td><td>gato</td><td>pekinés</td><td>14-Oct-24</td><td>jaime lópez</td></tr>
-          <tr><td>90</td><td>lulu</td><td>perro</td><td>chihuahua</td><td>22-Nov-24</td><td>maya</td></tr>
-        -->
+          {% for mascota in mascotas %}
+          <tr>
+            <td>{{ mascota.id }}</td>
+            <td>{{ mascota.nombre }}</td>
+            <td>{{ mascota.especie }}</td>
+            <td>{{ mascota.raza }}</td>
+            <td>{{ mascota.nacimiento }}</td>
+            <td>
+              {% if mascota.sexo == 'M' %}
+                <span class="badge bg-primary">Macho</span>
+              {% else %}
+                <span class="badge bg-pink" style="background-color: #e83e8c;">Hembra</span>
+              {% endif %}
+            </td>
+            <td>{{ mascota.id_propietario.nombre }}</td>
+            <td>{{ mascota.id_propietario.telefono|default:"-" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center text-muted py-4">
+              <i class="bi bi-inbox" style="font-size: 2rem;"></i><br>
+              No hay mascotas registradas
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
+  
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
