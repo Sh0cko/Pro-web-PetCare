@@ -7,6 +7,12 @@ Proyecto de programación web
 ```
 pip install django pillow requests psycopg2-binary djangorestframework
 ```
+## USUARIO PRO ADMINISTRADOR PRO
+
+user: admin
+pass: root
+
+si hay problemas pues bajen que abajo hay instrucciones de como recuperar usuarios o crear nuevos (Inicio de sesion dentro de la app)
 
 ##  Descargar repo
 Clonar repositorio
@@ -23,10 +29,7 @@ git pull origin main
 ```
 ## Subir cambios
 
-### Sincronizar datos locales a los del repositorio
-```
-git pull origin main
-```
+
 
 ### Agregar cambios locales de ficheros a tu copia del repo
 ```
@@ -40,7 +43,17 @@ git commit -m "Descripción breve de lo que hiciste"
 ```
 git push origin main
 ```
+## Comandos para el server
 
+```
+python manage.py createsuperuser
+```
+
+cambiar password
+
+```
+python manage.py createsuperuser
+```
 # Comandos generales de Django y Python para el proyecto
 
 - ACTIVAR VIRT ENV EN EL PROYECTO

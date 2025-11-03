@@ -1,0 +1,295 @@
+-- ==========================================================
+--  PET CARE - Sistema de gestión veterinaria
+--  Motor: PostgreSQL
+-- ==========================================================
+
+-- 1️⃣ Crear la base de datos
+DROP DATABASE IF EXISTS petcare_database;
+CREATE DATABASE petcare_database
+    WITH 
+    OWNER = 'petcare-administrator'
+    ENCODING = 'UTF8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+-- 2️⃣ Conectarse a la nueva base de datos
+\c petcare_database;
+
+-- 3️⃣ Crear todas las tablas y relaciones
+
+-- ==============================
+-- TABLA: PROPIETARIO
+-- ==============================
+CREATE TABLE propietario (
+    id_propietario VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    telefono VARCHAR(20),
+    email VARCHAR(50),
+    direccion TEXT
+);
+
+-- ==============================
+-- TABLA: PACIENTES
+-- ==============================
+CREATE TABLE pacientes (
+    id VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(30) NOT NULL,
+    especie VARCHAR(30),
+    raza VARCHAR(30),
+    nacimiento DATE,
+    id_propietario VARCHAR(30),
+    sexo VARCHAR(10),         
+    color VARCHAR(50),        
+    CONSTRAINT fk_pacientes_propietario FOREIGN KEY (id_propietario)
+        REFERENCES propietario(id_propietario)
+        ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLA: DATOS DE CONSULTA
+-- ==============================
+CREATE TABLE datosconsulta (
+    id_consulta VARCHAR(30) PRIMARY KEY,
+    motivo TEXT,
+    fecha DATE,
+    diagnostico TEXT,
+    id_mascota VARCHAR(30) NOT NULL,
+    detalles_paciente TEXT,
+    CONSTRAINT fk_datosconsulta_pacientes FOREIGN KEY (id_mascota)
+        REFERENCES pacientes(id)
+        ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLA: ASEO DE MASCOTAS
+-- ==============================
+CREATE TABLE aseomascotas (
+    id_aseo VARCHAR(30) PRIMARY KEY,
+    id_mascota VARCHAR(30),
+    id_propietario VARCHAR(30),
+    tipo_banio VARCHAR(15),
+    es_agresivo BOOLEAN,
+    fecha_banio DATE,
+    CONSTRAINT fk_aseo_pacientes FOREIGN KEY (id_mascota)
+        REFERENCES pacientes(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_aseo_propietario FOREIGN KEY (id_propietario)
+        REFERENCES propietario(id_propietario)
+        ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLA: HOTEL
+-- ==============================
+CREATE TABLE hotel (
+    id_hotel VARCHAR(30) PRIMARY KEY,
+    id_mascota VARCHAR(30),
+    fecha_ingreso DATE NOT NULL,
+    fecha_egreso DATE NOT NULL,
+    habitacion VARCHAR(30),
+    observaciones TEXT,
+    CONSTRAINT fk_hotel_pacientes FOREIGN KEY (id_mascota)
+        REFERENCES pacientes(id)
+        ON DELETE CASCADE,
+    CONSTRAINT chk_fechas_hotel CHECK (fecha_egreso >= fecha_ingreso)
+);
+
+-- ==============================
+-- TABLA: VACUNAS
+-- ==============================
+CREATE TABLE vacuna (
+    id_vacuna VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(30),
+    descripcion TEXT
+);
+
+-- ==============================
+-- TABLA: VACUNACIÓN
+-- ==============================
+CREATE TABLE vacunacion (
+    id_vacunacion VARCHAR(30) PRIMARY KEY,
+    id_mascota VARCHAR(30),
+    id_vacuna VARCHAR(30),
+    fecha DATE,
+    veterinario VARCHAR(30),
+    CONSTRAINT fk_vacunacion_pacientes FOREIGN KEY (id_mascota)
+        REFERENCES pacientes(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_vacunacion_vacuna FOREIGN KEY (id_vacuna)
+        REFERENCES vacuna(id_vacuna)
+        ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLA: INVENTARIO
+-- ==============================
+CREATE TABLE inventario (
+    id_producto VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(50),
+    descripcion TEXT,
+    cantidad INT DEFAULT 0,
+    precio DECIMAL(10,2),
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==============================
+-- TABLA: PRODUCTOS
+-- ==============================
+CREATE TABLE producto (
+    id_producto VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(50),
+    precio DECIMAL(10,2),
+    cantidad INT,
+    descripcion TEXT
+);
+
+-- ==============================
+-- TABLA: SERVICIOS
+-- ==============================
+CREATE TABLE servicio (
+    id_servicio VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(50),
+    descripcion TEXT,
+    costo DECIMAL(10,2)
+);
+
+-- ==============================
+-- TABLA: EMPLEADOS
+-- ==============================
+CREATE TABLE empleado (
+    id_empleado VARCHAR(30) PRIMARY KEY,
+    nombre VARCHAR(50),
+    cargo VARCHAR(30),
+    telefono VARCHAR(20),
+    email VARCHAR(50)
+);
+
+-- ==============================
+-- TABLA: PAGOS
+-- ==============================
+CREATE TABLE pago (
+    id_pago VARCHAR(30) PRIMARY KEY,
+    id_propietario VARCHAR(30),
+    fecha DATE,
+    monto DECIMAL(10,2),
+    metodo VARCHAR(30),
+    CONSTRAINT fk_pago_propietario FOREIGN KEY (id_propietario)
+        REFERENCES propietario(id_propietario)
+        ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLA: FACTURAS
+-- ==============================
+CREATE TABLE factura (
+    id_factura VARCHAR(30) PRIMARY KEY,
+    id_propietario VARCHAR(30),
+    fecha DATE,
+    total DECIMAL(10,2),
+    CONSTRAINT fk_factura_propietario FOREIGN KEY (id_propietario)
+        REFERENCES propietario(id_propietario)
+        ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLAS INTERMEDIAS (RELACIONES N:M)
+-- ==============================
+
+-- FACTURA ↔ SERVICIO
+CREATE TABLE factura_servicio (
+    id_factura VARCHAR(30),
+    id_servicio VARCHAR(30),
+    cantidad INT DEFAULT 1,
+    PRIMARY KEY (id_factura, id_servicio),
+    FOREIGN KEY (id_factura) REFERENCES factura(id_factura) ON DELETE CASCADE,
+    FOREIGN KEY (id_servicio) REFERENCES servicio(id_servicio) ON DELETE CASCADE
+);
+
+-- PAGO ↔ FACTURA
+CREATE TABLE pago_factura (
+    id_pago VARCHAR(30),
+    id_factura VARCHAR(30),
+    PRIMARY KEY (id_pago, id_factura),
+    FOREIGN KEY (id_pago) REFERENCES pago(id_pago) ON DELETE CASCADE,
+    FOREIGN KEY (id_factura) REFERENCES factura(id_factura) ON DELETE CASCADE
+);
+
+-- ==============================
+-- TABLA: HISTORIAL CLÍNICO
+-- ==============================
+CREATE TABLE historialclinico (
+    id_historial VARCHAR(30) PRIMARY KEY,
+    id_mascota VARCHAR(30),
+    peso DECIMAL(5,2),
+    temperatura DECIMAL(4,1),
+    antecedentes TEXT,
+    tratamientos TEXT,
+    observaciones TEXT,
+    CONSTRAINT fk_historial_pacientes FOREIGN KEY (id_mascota)
+        REFERENCES pacientes(id)
+        ON DELETE CASCADE
+);
+
+-- ==========================================================
+-- FUNCIONES
+-- ==========================================================
+
+-- Ver todos los pacientes
+CREATE OR REPLACE FUNCTION ver_pacientes()
+RETURNS TABLE (
+    id VARCHAR(30),
+    nombre VARCHAR(30),
+    especie VARCHAR(30),
+    raza VARCHAR(30),
+    nacimiento DATE,
+    id_propietario VARCHAR(30)
+)
+AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM pacientes;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Insertar nuevo paciente
+CREATE OR REPLACE FUNCTION insertar_paciente(
+    _id VARCHAR(30),
+    _nombre VARCHAR(30),
+    _especie VARCHAR(30),
+    _raza VARCHAR(30),
+    _nacimiento DATE,
+    _id_propietario VARCHAR(30)
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO pacientes (id, nombre, especie, raza, nacimiento, id_propietario)
+    VALUES (_id, _nombre, _especie, _raza, _nacimiento, _id_propietario);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Eliminar paciente
+CREATE OR REPLACE FUNCTION eliminar_paciente(_id VARCHAR(30))
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM pacientes WHERE id = _id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==========================================================
+-- VISTAS
+-- ==========================================================
+CREATE OR REPLACE VIEW vista_pacientes_propietarios AS
+SELECT 
+    p.id AS id_paciente,
+    p.nombre AS nombre_mascota,
+    p.especie,
+    p.raza,
+    p.nacimiento,
+    pr.nombre AS propietario,
+    pr.telefono,
+    pr.email
+FROM pacientes p
+JOIN propietario pr ON p.id_propietario = pr.id_propietario;
+
+-- ==========================================================
+-- FIN DEL SCRIPT
+-- ==========================================================

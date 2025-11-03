@@ -1,14 +1,97 @@
-from django.contrib.auth.decorators import login_required
-
-@login_required(login_url='/')
-def hospedaje(request):
-    return render(request, "home/hospedaje.html")
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
 from django.contrib import messages
-from .models import Propietario, Paciente
+from .models import Propietario, Paciente, Hotel
+
+@login_required(login_url='/')
+def hospedaje(request):
+    # Obtener parámetro de búsqueda
+    busqueda = request.GET.get('buscar', '').strip()
+    
+    # Obtener todos los registros de hospedaje o filtrar por búsqueda
+    if busqueda:
+        hospedajes = Hotel.objects.select_related('id_mascota').filter(
+            id_hotel__icontains=busqueda
+        ) | Hotel.objects.select_related('id_mascota').filter(
+            id_mascota__nombre__icontains=busqueda
+        ) | Hotel.objects.select_related('id_mascota').filter(
+            id_mascota__id__icontains=busqueda
+        )
+        hospedajes = hospedajes.order_by('-fecha_ingreso')
+    else:
+        hospedajes = Hotel.objects.select_related('id_mascota').all().order_by('-fecha_ingreso')
+    
+    if request.method == 'POST':
+        # Verificar si es una acción de eliminar
+        accion = request.POST.get('accion')
+        
+        if accion == 'eliminar':
+            id_hotel = request.POST.get('id_hotel_eliminar')
+            try:
+                hospedaje = Hotel.objects.get(id_hotel=id_hotel)
+                nombre_mascota = hospedaje.id_mascota.nombre
+                hospedaje.delete()
+                messages.success(request, f"Hospedaje {id_hotel} de {nombre_mascota} eliminado exitosamente")
+                return redirect('hospedaje')
+            except Hotel.DoesNotExist:
+                messages.error(request, f"El hospedaje con ID {id_hotel} no existe")
+                return redirect('hospedaje')
+            except Exception as e:
+                messages.error(request, f"Error al eliminar: {str(e)}")
+                return redirect('hospedaje')
+        
+        # Si no es eliminar, es crear
+        try:
+            # Obtener datos del formulario
+            id_hotel = request.POST.get('id_hotel')
+            id_mascota = request.POST.get('id_mascota')
+            fecha_ingreso = request.POST.get('fecha_ingreso')
+            fecha_egreso = request.POST.get('fecha_egreso')
+            habitacion = request.POST.get('habitacion', '')
+            observaciones = request.POST.get('observaciones', '')
+            
+            # Validaciones
+            if not all([id_hotel, id_mascota, fecha_ingreso, fecha_egreso]):
+                messages.error(request, "Por favor complete todos los campos obligatorios")
+                return redirect('hospedaje')
+            
+            # Verificar que la mascota existe
+            try:
+                mascota = Paciente.objects.get(id=id_mascota)
+            except Paciente.DoesNotExist:
+                messages.error(request, f"La mascota con ID {id_mascota} no existe")
+                return redirect('hospedaje')
+            
+            # Verificar que el ID de hospedaje no exista
+            if Hotel.objects.filter(id_hotel=id_hotel).exists():
+                messages.warning(request, f"Ya existe un hospedaje con ID {id_hotel}")
+                return redirect('hospedaje')
+            
+            # Crear el registro de hospedaje
+            hospedaje = Hotel.objects.create(
+                id_hotel=id_hotel,
+                id_mascota=mascota,
+                fecha_ingreso=fecha_ingreso,
+                fecha_egreso=fecha_egreso,
+                habitacion=habitacion,
+                observaciones=observaciones
+            )
+            
+            messages.success(request, f"Hospedaje {id_hotel} registrado exitosamente para {mascota.nombre}")
+            return redirect('hospedaje')
+            
+        except Exception as e:
+            messages.error(request, f"Error al registrar hospedaje: {str(e)}")
+            return redirect('hospedaje')
+    
+    context = {
+        'hospedajes': hospedajes,
+        'busqueda': busqueda
+    }
+    
+    return render(request, "home/hospedaje.html", context)
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -29,14 +112,14 @@ def index(request):
 def menu(request):
     razas_gatos = [
         "Siamés", "Persa", "Maine Coon", "Bengala", "Sphynx", "Ragdoll", 
-        "British Shorthair", "Abisinio", "Escocés", "Noruego"
+        "British Shorthair", "Abisinio", "Escocés", "Noruego", "Sin especificar"
     ]
 
     razas_perro = [
         "Chihuahua", "Pug", "Pastor Alemán", "Labrador", "Golden Retriever", 
         "Bulldog", "Beagle", "Dálmata", "Boxer", "Shih Tzu", "Pomerania", 
         "Pitbull", "Schnauzer", "Doberman", "Rottweiler", "Cocker Spaniel", 
-        "Border Collie", "Husky", "Samoyedo", "Akita"
+        "Border Collie", "Husky", "Samoyedo", "Akita", "Sin especificar"
     ]
 
     # Obtener todas las mascotas para mostrar en la tabla
