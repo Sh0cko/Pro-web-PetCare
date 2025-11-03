@@ -123,6 +123,18 @@ sudo systemctl status postgresql.service
 
 #### 4. Crear Usuario y Base de Datos
 
+Codigos genericos a continuacion, los mas especificos estan en el siguiente directorio:
+
+```
+Pro-web-PetCare/             
+├── PostgreDB/             
+│   ├── Estructura.sql     # Estructura de la BD en SQL
+│   └── readme,md          # Informacion sobre la BD
+└── requirements.txt       
+```
+
+
+
 ```bash
 # Acceder a PostgreSQL
 sudo -u postgres psql
