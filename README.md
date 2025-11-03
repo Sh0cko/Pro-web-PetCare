@@ -345,7 +345,8 @@ Pro-web-PetCare/
 │   ├── static/            # Archivos estáticos (CSS, JS, img)
 │   └── manage.py          # Script de gestión Django
 ├── PostgreDB/             # Scripts de base de datos
-│   └── Estructura.sql     # Estructura de la BD
+│   ├── Estructura.sql     # Estructura de la BD en SQL
+│   └── readme,md          # Informacion sobre la BD
 └── requirements.txt       # Dependencias del proyecto
 ```
 
