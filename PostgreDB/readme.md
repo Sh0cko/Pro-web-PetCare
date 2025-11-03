@@ -17,3 +17,12 @@ psql -U petcare-administrator -h localhost -f PostgreDB/Estructura.sql
 NAME: petcare_database,
 USER': petcare-administrator,          
 PASSWORD': root123,
+
+```bash
+-- Verificar usuarios y bases de datos
+\du
+\l
+
+-- Salir
+\q
+```
