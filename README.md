@@ -24,6 +24,19 @@ Proyecto web desarrollado con Django y PostgreSQL para la gestión de servicios 
 
 ---
 
+## Credenciales
+
+### Usuario Administrador de la Aplicación
+
+- **Usuario**: `petcareadmin`
+- **Contraseña**: `root`
+
+### Rol dentro de PostgreSQL
+- **DB-Name**: `petcare_database`,
+- **Usuario**: `petcare-administrator`,          
+- **Contraseña**: `root123`, 
+
+
 ##  Instalación Rápida
 
 ### 1. Clonar el Repositorio
@@ -234,13 +247,13 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 3. Crear Superusuario
+### 3. Crear Superusuario para poder iniciar sesion en la app
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 4. Iniciar Servidor
+### 4. Ejecutar Servidor
 
 ```bash
 python manage.py runserver
@@ -265,14 +278,16 @@ python manage.py shell
 # Ejecutar shell de base de datos
 python manage.py dbshell
 
-# Correr servidor de desarrollo
-python manage.py runserver
-
 # Crear migraciones
 python manage.py makemigrations
 
-# Aplicar migraciones
+
+# Aplicar migraciones IMPORTANTE
 python manage.py migrate
+
+# Correr servidor de desarrollo IMPORTANTE
+python manage.py runserver
+
 ```
 
 ---
@@ -288,7 +303,7 @@ git status
 # Actualizar tu copia local
 git pull origin main
 
-# Agregar todos los cambios
+# Agregar todos los cambios locales
 git add .
 
 # Hacer commit de cambios
@@ -311,7 +326,7 @@ git push origin main
 
 ### Usuario Administrador de la Aplicación
 
-- **Usuario**: `admin`
+- **Usuario**: `petcareadmin`
 - **Contraseña**: `root`
 
 **Nota**: Si tienes problemas para iniciar sesión, puedes crear un nuevo superusuario con:
@@ -328,7 +343,7 @@ python manage.py changepassword admin
 
 ---
 
-## 📁 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 Pro-web-PetCare/
@@ -360,17 +375,6 @@ Pro-web-PetCare/
 - Verificar credenciales en `settings.py`
 - Revisar archivo `pg_hba.conf` para permisos de autenticación
 
-### Error en Migraciones
-
-```bash
-# Eliminar migraciones anteriores (cuidado en producción)
-find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
-find . -path "*/migrations/*.pyc"  -delete
-
-# Recrear migraciones
-python manage.py makemigrations
-python manage.py migrate
-```
 
 ### Puerto 8000 en Uso
 
