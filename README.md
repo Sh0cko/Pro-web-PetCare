@@ -4,7 +4,7 @@ Proyecto web desarrollado con Django y PostgreSQL para la gestión de servicios 
 
 ---
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 - [Requisitos Previos](#requisitos-previos)
 - [Instalación Rápida](#instalación-rápida)
@@ -16,7 +16,7 @@ Proyecto web desarrollado con Django y PostgreSQL para la gestión de servicios 
 
 ---
 
-## 🔧 Requisitos Previos
+##  Requisitos Previos
 
 - Python 3.8+
 - PostgreSQL 12+
@@ -24,7 +24,7 @@ Proyecto web desarrollado con Django y PostgreSQL para la gestión de servicios 
 
 ---
 
-## 🚀 Instalación Rápida
+##  Instalación Rápida
 
 ### 1. Clonar el Repositorio
 
@@ -47,7 +47,7 @@ pip install django pillow requests psycopg2-binary djangorestframework
 
 ---
 
-## 🔨 Configuración del Entorno
+##  Configuración del Entorno
 
 ### Crear Entorno Virtual
 
@@ -70,7 +70,7 @@ pip freeze > requirements.txt
 
 ---
 
-## 🗄️ Configuración de la Base de Datos
+##  Configuración de la Base de Datos
 
 ### PostgreSQL en Linux (Arch/Manjaro)
 
@@ -250,7 +250,7 @@ El servidor estará disponible en: `http://127.0.0.1:8000/`
 
 ---
 
-## 📝 Comandos Django Útiles
+##  Comandos Django Útiles
 
 ```bash
 # Crear nuevo proyecto
@@ -277,7 +277,7 @@ python manage.py migrate
 
 ---
 
-## 🔄 Control de Versiones (Git)
+##  Control de Versiones (Git)
 
 ### Comandos Básicos
 
@@ -351,7 +351,7 @@ Pro-web-PetCare/
 
 ---
 
-## 🆘 Solución de Problemas
+##  Solución de Problemas
 
 ### Error de Conexión a PostgreSQL
 
