@@ -1,0 +1,413 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar Pacientes</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <style>
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 220px;
+      background: #067c7c;
+      color: #fff;
+      padding-top: 30px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.08);
+      z-index: 1001;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+    }
+    .sidebar.active {
+      transform: translateX(0);
+    }
+    .sidebar h4 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: bold;
+      color: #fff;
+    }
+    .sidebar .nav {
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sidebar .nav-link {
+      color: #fff;
+      font-size: 1.08rem;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin-bottom: 2px;
+      transition: background 0.2s;
+    }
+    .sidebar .nav-link.active, .sidebar .nav-link:hover {
+      background: #10a3a3;
+      color: #fff;
+    }
+    .sidebar .section-title {
+      margin: 18px 0 6px 18px;
+      font-size: 1.05rem;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      display: inline-block;
+    }
+    .sidebar .logout-btn {
+      margin-top: 40px;
+      width: 90%;
+      margin-left: 5%;
+    }
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.18);
+      z-index: 1000;
+    }
+    .sidebar.active ~ .sidebar-backdrop {
+      display: block;
+    }
+    .sidebar-toggle {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1100;
+      background: #067c7c;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 1.15rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      transition: background 1s;
+    }
+    .sidebar-toggle:hover {
+      background: #10a3a3;
+    }
+    body {
+      min-height: 100vh;
+      background: #eaf7f7;
+      padding: 24px 0;
+    }
+    .main-header {
+      background: #06918f;
+      color: #fff;
+      border-radius: 16px;
+      margin: 0 auto 32px auto;
+      max-width: 1200px;
+      padding: 18px 0 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .search-card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 2rem;
+      margin-bottom: 32px;
+    }
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .search-bar input {
+      flex: 1;
+      border-radius: 24px;
+      border: 1.5px solid #e0e0e0;
+      padding: 10px 20px;
+      font-size: 1.05rem;
+    }
+    .search-bar input:focus {
+      border-color: #10a3a3;
+      box-shadow: 0 0 0 2px #10a3a322;
+      outline: none;
+    }
+    .search-bar button {
+      border-radius: 24px;
+      padding: 10px 30px;
+      font-weight: 600;
+    }
+    .table-responsive {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table {
+      margin-bottom: 0;
+    }
+    .table thead th {
+      background: #06918f;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      vertical-align: middle;
+    }
+    .table tbody td {
+      background: #fff;
+      border: none;
+      color: #333;
+      vertical-align: middle;
+    }
+    .table tbody tr:hover {
+      background: #f8fafa;
+    }
+    .badge {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: #888;
+    }
+    .no-results i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .stats-card {
+      background: linear-gradient(135deg, #10a3a3 0%, #067c7c 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .stats-card h5 {
+      margin: 0;
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    .stats-card .number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    .stats-card input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .stats-card input:focus {
+      background: rgba(255,255,255,0.3);
+      border-color: rgba(255,255,255,0.5);
+      outline: none;
+      box-shadow: none;
+    }
+    @media (max-width: 900px) {
+      .main-content, .main-header { 
+        max-width: 98vw; 
+        padding: 0 2vw; 
+      }
+      .search-bar {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="sidebar-toggle" id="sidebarToggle" title="Menú">
+    <i class="bi bi-list"></i>
+  </button>
+  <div class="sidebar" id="sidebarMenu">
+    <h4><i class="bi bi-paw"></i> Pet Care</h4>
+    <div class="section-title">Pacientes</div>
+    <nav class="nav flex-column">
+      <a class="nav-link" href="{% url 'menu' %}">Registrar</a>
+      <a class="nav-link active" href="{% url 'buscar_pacientes' %}">Buscar</a>
+    </nav>
+    <div class="section-title">Consulta</div>
+    <nav class="nav flex-column">
+      <a class="nav-link" href="#">Registrar</a>
+      <a class="nav-link" href="#">Buscar</a>
+    </nav>
+    <div class="section-title">Otros</div>
+    <nav class="nav flex-column">
+      <a class="nav-link" href="#">Baño</a>
+      <a class="nav-link" href="#">Historial</a>
+      <a class="nav-link" href="#">Productos</a>
+      <a class="nav-link" href="{% url 'hospedaje' %}">Hospedaje</a>
+    </nav>
+    <a href="{% url 'logout' %}" class="btn btn-danger logout-btn">Cerrar sesión</a>
+  </div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Contenido principal -->
+  <div class="main-header">
+    Buscar Pacientes
+  </div>
+
+  <div class="main-content">
+    <!-- Estadísticas -->
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <div class="stats-card">
+          <h5>Total de Pacientes</h5>
+          <div class="number">{{ total_pacientes }}</div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="stats-card" style="background: linear-gradient(135deg, #52b788 0%, #40916c 100%);">
+          <h5>Buscar Propietario</h5>
+          <form method="GET" action="{% url 'buscar_pacientes' %}" style="margin-top: 1rem;">
+            <div style="display: flex; gap: 8px;">
+              <input 
+                type="text" 
+                name="buscar_propietario" 
+                class="form-control" 
+                placeholder="Nombre o ID del propietario..."
+                value="{{ busqueda_propietario }}"
+                style="border-radius: 20px; padding: 8px 15px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white; font-size: 0.95rem;"
+              >
+              <button type="submit" class="btn btn-light" style="border-radius: 20px; padding: 8px 20px; font-weight: 600;">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+            {% if propietario_encontrado %}
+            <div style="margin-top: 1rem; padding: 12px; background: rgba(255,255,255,0.2); border-radius: 12px;">
+              <div style="font-size: 0.9rem; opacity: 0.9;">{{ propietario_encontrado.nombre }}</div>
+              <div style="font-size: 2rem; font-weight: bold; margin-top: 4px;">{{ mascotas_propietario }} mascota{{ mascotas_propietario|pluralize }}</div>
+            </div>
+            {% elif busqueda_propietario %}
+            <div style="margin-top: 1rem; padding: 12px; background: rgba(255,255,255,0.2); border-radius: 12px; font-size: 0.9rem;">
+              No se encontró el propietario
+            </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta de búsqueda -->
+    <div class="search-card">
+      <h5 class="mb-4" style="color: #06918f;">
+        <i class="bi bi-search"></i> Buscar Mascota
+      </h5>
+      
+      <!-- Barra de búsqueda -->
+      <form method="GET" action="{% url 'buscar_pacientes' %}">
+        <div class="search-bar">
+          <input 
+            type="text" 
+            name="buscar" 
+            class="form-control" 
+            placeholder="Buscar por ID, nombre, especie, raza o propietario..."
+            value="{{ busqueda }}"
+            autofocus
+          >
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Buscar
+          </button>
+          {% if busqueda %}
+          <a href="{% url 'buscar_pacientes' %}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Limpiar
+          </a>
+          {% endif %}
+        </div>
+      </form>
+
+      <!-- Mensajes -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Tabla de resultados -->
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID Mascota</th>
+              <th>Nombre</th>
+              <th>Especie</th>
+              <th>Raza</th>
+              <th>Sexo</th>
+              <th>Edad</th>
+              <th>Color</th>
+              <th>Propietario</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+              <td><strong>{{ paciente.id }}</strong></td>
+              <td>{{ paciente.nombre }}</td>
+              <td>{{ paciente.especie|default:"N/A" }}</td>
+              <td>{{ paciente.raza|default:"N/A" }}</td>
+              <td>
+                {% if paciente.sexo == 'M' %}
+                  <span class="badge bg-primary">♂ Macho</span>
+                {% elif paciente.sexo == 'H' %}
+                  <span class="badge" style="background-color: #e83e8c;">♀ Hembra</span>
+                {% else %}
+                  <span class="badge bg-secondary">N/A</span>
+                {% endif %}
+              </td>
+              <td>{{ paciente.edad }}</td>
+              <td>{{ paciente.color|default:"-" }}</td>
+              <td>{{ paciente.id_propietario.nombre }}</td>
+              <td>{{ paciente.id_propietario.telefono|default:"-" }}</td>
+              <td>{{ paciente.id_propietario.email|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="10" class="no-results">
+                <i class="bi bi-inbox"></i>
+                {% if busqueda %}
+                  <h5>No se encontraron resultados para "{{ busqueda }}"</h5>
+                  <p>Intenta con otros términos de búsqueda</p>
+                {% else %}
+                  <h5>No hay pacientes registrados</h5>
+                  <p>Comienza registrando tu primera mascota</p>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if busqueda and pacientes %}
+        <div class="mt-3 text-muted">
+          <i class="bi bi-info-circle"></i> 
+          Se encontraron <strong>{{ pacientes|length }}</strong> resultado(s) para "<strong>{{ busqueda }}</strong>"
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    // Sidebar toggle
+    const sidebar = document.getElementById('sidebarMenu');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      backdrop.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+    });
+    
+    backdrop.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      backdrop.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

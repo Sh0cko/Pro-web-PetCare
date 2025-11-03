@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
+from datetime import date
 from .models import Propietario, Paciente, Hotel
 
 @login_required(login_url='/')
@@ -203,3 +205,81 @@ def menu(request):
 def cerrar_sesion(request):
     logout(request)
     return redirect('index_view')
+
+@login_required(login_url='/')
+def buscar_pacientes(request):
+    """Vista para buscar y listar pacientes"""
+    busqueda = request.GET.get('buscar', '').strip()
+    busqueda_propietario = request.GET.get('buscar_propietario', '').strip()
+    
+    # Obtener todos los pacientes o filtrar por búsqueda
+    if busqueda:
+        pacientes = Paciente.objects.select_related('id_propietario').filter(
+            Q(id__icontains=busqueda) |
+            Q(nombre__icontains=busqueda) |
+            Q(especie__icontains=busqueda) |
+            Q(raza__icontains=busqueda) |
+            Q(color__icontains=busqueda) |
+            Q(id_propietario__nombre__icontains=busqueda) |
+            Q(id_propietario__id_propietario__icontains=busqueda)
+        ).distinct().order_by('nombre')
+    else:
+        pacientes = Paciente.objects.select_related('id_propietario').all().order_by('nombre')
+    
+    # Calcular edad para cada paciente
+    for paciente in pacientes:
+        if paciente.nacimiento:
+            hoy = date.today()
+            edad_years = hoy.year - paciente.nacimiento.year
+            edad_months = hoy.month - paciente.nacimiento.month
+            
+            if edad_months < 0:
+                edad_years -= 1
+                edad_months += 12
+            
+            if edad_years > 0:
+                paciente.edad = f"{edad_years} año{'s' if edad_years != 1 else ''}"
+                if edad_months > 0:
+                    paciente.edad += f", {edad_months} mes{'es' if edad_months != 1 else ''}"
+            elif edad_months > 0:
+                paciente.edad = f"{edad_months} mes{'es' if edad_months != 1 else ''}"
+            else:
+                dias = (hoy - paciente.nacimiento).days
+                paciente.edad = f"{dias} día{'s' if dias != 1 else ''}"
+        else:
+            paciente.edad = "N/A"
+    
+    # Estadísticas
+    total_pacientes = Paciente.objects.count()
+    total_propietarios = Propietario.objects.count()
+    
+    # Búsqueda de propietario y sus mascotas
+    propietario_encontrado = None
+    mascotas_propietario = []
+    if busqueda_propietario:
+        try:
+            # Buscar propietario por nombre o ID
+            propietarios = Propietario.objects.filter(
+                Q(nombre__icontains=busqueda_propietario) |
+                Q(id_propietario__icontains=busqueda_propietario)
+            )
+            
+            if propietarios.exists():
+                propietario_encontrado = propietarios.first()
+                mascotas_propietario = Paciente.objects.filter(
+                    id_propietario=propietario_encontrado
+                ).count()
+        except Exception as e:
+            pass
+    
+    context = {
+        'pacientes': pacientes,
+        'busqueda': busqueda,
+        'total_pacientes': total_pacientes,
+        'total_propietarios': total_propietarios,
+        'busqueda_propietario': busqueda_propietario,
+        'propietario_encontrado': propietario_encontrado,
+        'mascotas_propietario': mascotas_propietario,
+    }
+    
+    return render(request, "home/buscar_pacientes.html", context)
