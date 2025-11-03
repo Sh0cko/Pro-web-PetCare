@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if pago %}Editar{% else %}Crear{% endif %} Pago - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if pago %}Editar Pago{% else %}Crear Nuevo Pago{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_pago">ID Pago *</label>
+        <input type="text" id="id_pago" name="id_pago" 
+               value="{{ pago.id_pago|default:'' }}" 
+               {% if pago %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_propietario">Propietario</label>
+        <select id="id_propietario" name="id_propietario">
+            <option value="">Seleccione un propietario</option>
+            {% for propietario in propietarios %}
+            <option value="{{ propietario.id_propietario }}" 
+                    {% if pago.id_propietario_id == propietario.id_propietario %}selected{% endif %}>
+                {{ propietario.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" name="fecha" 
+               value="{{ pago.fecha|date:'Y-m-d'|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="monto">Monto</label>
+        <input type="number" step="0.01" id="monto" name="monto" 
+               value="{{ pago.monto|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="metodo">Método de Pago</label>
+        <input type="text" id="metodo" name="metodo" 
+               value="{{ pago.metodo|default:'' }}" 
+               placeholder="Ej: Efectivo, Tarjeta, Transferencia">
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'pago_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

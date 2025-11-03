@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Historiales Clínicos - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Historiales Clínicos</h2>
+<a href="{% url 'historialclinico_create' %}" class="btn btn-success">➕ Nuevo Historial</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mascota</th>
+            <th>Peso (kg)</th>
+            <th>Temperatura (°C)</th>
+            <th>Antecedentes</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for historial in historiales %}
+        <tr>
+            <td>{{ historial.id_historial }}</td>
+            <td>{{ historial.id_mascota.nombre|default:"N/A" }}</td>
+            <td>{{ historial.peso|default:"N/A" }}</td>
+            <td>{{ historial.temperatura|default:"N/A" }}</td>
+            <td>{{ historial.antecedentes|truncatewords:10|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'historialclinico_update' historial.id_historial %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'historialclinico_delete' historial.id_historial %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay historiales clínicos registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

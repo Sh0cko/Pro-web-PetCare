@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Hotel - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Reservas de Hotel</h2>
+<a href="{% url 'hotel_create' %}" class="btn btn-success">➕ Nueva Reserva</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mascota</th>
+            <th>Fecha Ingreso</th>
+            <th>Fecha Egreso</th>
+            <th>Habitación</th>
+            <th>Observaciones</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hotel in hoteles %}
+        <tr>
+            <td>{{ hotel.id_hotel }}</td>
+            <td>{{ hotel.id_mascota.nombre|default:"N/A" }}</td>
+            <td>{{ hotel.fecha_ingreso|date:"d/m/Y" }}</td>
+            <td>{{ hotel.fecha_egreso|date:"d/m/Y" }}</td>
+            <td>{{ hotel.habitacion|default:"N/A" }}</td>
+            <td>{{ hotel.observaciones|truncatewords:5|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'hotel_update' hotel.id_hotel %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'hotel_delete' hotel.id_hotel %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No hay reservas de hotel registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

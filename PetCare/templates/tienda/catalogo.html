@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Tienda - PetCare{% endblock %}
+
+{% block content %}
+<h2>🛒 Tienda de Productos</h2>
+<p>Selecciona los productos que deseas comprar</p>
+
+<div style="text-align: right; margin-bottom: 1rem;">
+    <a href="{% url 'carrito_ver' %}" class="btn btn-primary">
+        🛍️ Ver Carrito
+    </a>
+</div>
+
+{% if productos %}
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+    {% for producto in productos %}
+    <div style="background-color: white; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="color: #2c3e50; margin-bottom: 1rem;">{{ producto.nombre }}</h3>
+        
+        <p style="color: #7f8c8d; min-height: 60px;">
+            {{ producto.descripcion|default:"Sin descripción"|truncatewords:15 }}
+        </p>
+        
+        <div style="margin: 1rem 0; padding: 1rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+            <div style="font-size: 1.8rem; color: #27ae60; font-weight: bold;">
+                ${{ producto.precio }}
+            </div>
+            <div style="color: #7f8c8d; margin-top: 0.5rem;">
+                {% if producto.cantidad > 0 %}
+                    <span style="color: #27ae60;">✓ En stock: {{ producto.cantidad }} unidades</span>
+                {% else %}
+                    <span style="color: #e74c3c;">✗ Sin stock</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if producto.cantidad > 0 %}
+        <form method="post" action="{% url 'carrito_agregar' producto.id_producto %}" style="margin-top: 1rem;">
+            {% csrf_token %}
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
+                <label for="cantidad_{{ producto.id_producto }}" style="font-weight: bold;">Cantidad:</label>
+                <input type="number" 
+                       id="cantidad_{{ producto.id_producto }}"
+                       name="cantidad" 
+                       value="1" 
+                       min="1" 
+                       max="{{ producto.cantidad }}"
+                       style="width: 80px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%;">
+                🛒 Agregar al Carrito
+            </button>
+        </form>
+        {% else %}
+        <button class="btn" style="width: 100%; background-color: #95a5a6; color: white; cursor: not-allowed;" disabled>
+            Producto Agotado
+        </button>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="text-align: center; padding: 3rem; background-color: white; border-radius: 8px; margin-top: 2rem;">
+    <p style="font-size: 1.2rem; color: #7f8c8d;">No hay productos disponibles en este momento</p>
+</div>
+{% endif %}
+{% endblock %}

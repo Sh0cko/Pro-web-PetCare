@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Vacunas - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Vacunas</h2>
+<a href="{% url 'vacuna_create' %}" class="btn btn-success">➕ Nueva Vacuna</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vacuna in vacunas %}
+        <tr>
+            <td>{{ vacuna.id_vacuna }}</td>
+            <td>{{ vacuna.nombre }}</td>
+            <td>{{ vacuna.descripcion|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'vacuna_update' vacuna.id_vacuna %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'vacuna_delete' vacuna.id_vacuna %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No hay vacunas registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

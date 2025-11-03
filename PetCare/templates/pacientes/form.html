@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if paciente %}Editar{% else %}Crear{% endif %} Paciente - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if paciente %}Editar Paciente{% else %}Crear Nuevo Paciente{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id">ID Paciente *</label>
+        <input type="text" id="id" name="id" 
+               value="{{ paciente.id|default:'' }}" 
+               {% if paciente %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ paciente.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="especie">Especie</label>
+        <input type="text" id="especie" name="especie" 
+               value="{{ paciente.especie|default:'' }}" 
+               placeholder="Ej: Perro, Gato, etc.">
+    </div>
+    
+    <div class="form-group">
+        <label for="raza">Raza</label>
+        <input type="text" id="raza" name="raza" 
+               value="{{ paciente.raza|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="nacimiento">Fecha de Nacimiento</label>
+        <input type="date" id="nacimiento" name="nacimiento" 
+               value="{{ paciente.nacimiento|date:'Y-m-d'|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="id_propietario">Propietario</label>
+        <select id="id_propietario" name="id_propietario">
+            <option value="">Seleccione un propietario</option>
+            {% for propietario in propietarios %}
+            <option value="{{ propietario.id_propietario }}" 
+                    {% if paciente.id_propietario_id == propietario.id_propietario %}selected{% endif %}>
+                {{ propietario.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'pacientes_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

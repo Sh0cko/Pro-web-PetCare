@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Facturas - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Facturas</h2>
+<a href="{% url 'factura_create' %}" class="btn btn-success">➕ Nueva Factura</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Propietario</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for factura in facturas %}
+        <tr>
+            <td>{{ factura.id_factura }}</td>
+            <td>{{ factura.id_propietario.nombre|default:"N/A" }}</td>
+            <td>{{ factura.fecha|date:"d/m/Y"|default:"N/A" }}</td>
+            <td>${{ factura.total|default:"0.00" }}</td>
+            <td>
+                <a href="{% url 'factura_update' factura.id_factura %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'factura_delete' factura.id_factura %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No hay facturas registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

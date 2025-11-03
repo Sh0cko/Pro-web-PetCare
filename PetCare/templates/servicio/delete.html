@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Servicio - PetCare{% endblock %}
+
+{% block content %}
+<h2>Eliminar Servicio</h2>
+
+<p>¿Está seguro que desea eliminar el servicio <strong>{{ servicio.nombre }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">🗑️ Sí, Eliminar</button>
+    <a href="{% url 'servicio_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+</form>
+{% endblock %}

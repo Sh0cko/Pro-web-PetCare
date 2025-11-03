@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Carrito de Compras - PetCare{% endblock %}
+
+{% block content %}
+<h2>🛍️ Carrito de Compras</h2>
+
+{% if items_carrito %}
+<div style="background-color: white; border-radius: 8px; padding: 1.5rem; margin-top: 1rem;">
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items_carrito %}
+            <tr>
+                <td>
+                    <strong>{{ item.producto.nombre }}</strong><br>
+                    <small style="color: #7f8c8d;">{{ item.producto.descripcion|truncatewords:10|default:"" }}</small>
+                </td>
+                <td>${{ item.precio }}</td>
+                <td>
+                    <form method="post" action="{% url 'carrito_actualizar' item.producto.id_producto %}" style="display: inline-block;">
+                        {% csrf_token %}
+                        <input type="number" 
+                               name="cantidad" 
+                               value="{{ item.cantidad }}" 
+                               min="1" 
+                               max="{{ item.producto.cantidad }}"
+                               style="width: 70px; padding: 0.3rem; border: 1px solid #ddd; border-radius: 4px;"
+                               onchange="this.form.submit()">
+                    </form>
+                </td>
+                <td style="font-weight: bold; color: #27ae60;">${{ item.subtotal }}</td>
+                <td>
+                    <a href="{% url 'carrito_eliminar' item.producto.id_producto %}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('¿Eliminar este producto del carrito?')">
+                        🗑️ Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background-color: #f8f9fa; font-size: 1.2rem;">
+                <td colspan="3" style="text-align: right; font-weight: bold;">TOTAL:</td>
+                <td style="font-weight: bold; color: #27ae60; font-size: 1.5rem;">${{ total }}</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <a href="{% url 'tienda_productos' %}" class="btn btn-secondary">
+                ← Seguir Comprando
+            </a>
+            <a href="{% url 'carrito_vaciar' %}" 
+               class="btn btn-danger"
+               onclick="return confirm('¿Vaciar todo el carrito?')">
+                🗑️ Vaciar Carrito
+            </a>
+        </div>
+        <div>
+            <a href="{% url 'checkout' %}" class="btn btn-success" style="font-size: 1.1rem; padding: 0.75rem 2rem;">
+                💳 Proceder al Pago
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div style="text-align: center; padding: 3rem; background-color: white; border-radius: 8px; margin-top: 2rem;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
+    <h3 style="color: #7f8c8d; margin-bottom: 1rem;">Tu carrito está vacío</h3>
+    <a href="{% url 'tienda_productos' %}" class="btn btn-primary">
+        🛒 Ir a la Tienda
+    </a>
+</div>
+{% endif %}
+{% endblock %}
