@@ -24,4 +24,7 @@ urlpatterns = [
     path('buscar_pacientes/', views.buscar_pacientes, name="buscar_pacientes"),
     path('logout/', views.cerrar_sesion, name="logout"),
     path('hospedaje/', views.hospedaje, name="hospedaje"),
+
+    path('registrar_consulta/', views.registrar_consulta, name='registrar_consulta'),
+    path('buscar_consulta/', views.buscar_consultas, name='buscar_consultas'),
 ]

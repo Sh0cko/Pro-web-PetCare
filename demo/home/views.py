@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from datetime import date
-from .models import Propietario, Paciente, Hotel
+from .models import Propietario, Paciente, Hotel, DatosConsulta
 
 @login_required(login_url='/')
 def hospedaje(request):
@@ -283,3 +283,107 @@ def buscar_pacientes(request):
     }
     
     return render(request, "home/buscar_pacientes.html", context)
+
+# ==============================
+# NUEVAS VISTAS PARA CONSULTAS
+# ==============================
+
+@login_required(login_url='/')
+def registrar_consulta(request):
+    """Vista para registrar nuevas consultas médicas"""
+    # Obtener todas las mascotas para el dropdown
+    mascotas = Paciente.objects.select_related('id_propietario').all()
+    
+    if request.method == "POST":
+        try:
+            # Obtener datos del formulario
+            id_consulta = request.POST.get("id_consulta")
+            id_mascota = request.POST.get("id_mascota")
+            fecha = request.POST.get("fecha")
+            motivo = request.POST.get("motivo")
+            diagnostico = request.POST.get("diagnostico")
+            detalles_paciente = request.POST.get("detalles_paciente")
+            veterinario = request.POST.get("veterinario", '')
+
+            # Validaciones
+            if not all([id_consulta, id_mascota, fecha, motivo]):
+                messages.error(request, "Por favor complete todos los campos obligatorios (*)")
+                return redirect('registrar_consulta')
+
+            # Verificar si la consulta ya existe
+            if DatosConsulta.objects.filter(id_consulta=id_consulta).exists():
+                messages.warning(request, f"La consulta con ID {id_consulta} ya existe")
+                return redirect('registrar_consulta')
+
+            # Obtener la mascota
+            mascota = Paciente.objects.get(id=id_mascota)
+
+            # Crear la consulta
+            consulta = DatosConsulta.objects.create(
+                id_consulta=id_consulta,
+                motivo=motivo,
+                fecha=fecha,
+                diagnostico=diagnostico or '',
+                id_mascota=mascota,
+                detalles_paciente=detalles_paciente or ''
+            )
+
+            messages.success(request, f"Consulta {id_consulta} registrada exitosamente para {mascota.nombre}!")
+            return redirect('registrar_consulta')
+
+        except Paciente.DoesNotExist:
+            messages.error(request, "La mascota seleccionada no existe")
+        except Exception as e:
+            messages.error(request, f"Error al registrar consulta: {str(e)}")
+
+    context = {
+        "mascotas": mascotas
+    }
+    return render(request, "home/consulta_form.html", context)
+
+@login_required(login_url='/')
+def buscar_consultas(request):
+    """Vista para buscar y listar consultas"""
+    consultas = DatosConsulta.objects.select_related('id_mascota').all().order_by('-fecha')
+    
+    # Búsqueda por diferentes criterios
+    busqueda = request.GET.get('buscar', '').strip()
+    mascota_id = request.GET.get('mascota_id', '').strip()
+    fecha_desde = request.GET.get('fecha_desde', '').strip()
+    fecha_hasta = request.GET.get('fecha_hasta', '').strip()
+    
+    # Aplicar filtros
+    if busqueda:
+        consultas = consultas.filter(
+            Q(id_consulta__icontains=busqueda) |
+            Q(motivo__icontains=busqueda) |
+            Q(diagnostico__icontains=busqueda) |
+            Q(id_mascota__nombre__icontains=busqueda) |
+            Q(id_mascota__id__icontains=busqueda)
+        )
+    
+    if mascota_id:
+        consultas = consultas.filter(id_mascota_id=mascota_id)
+    
+    if fecha_desde:
+        consultas = consultas.filter(fecha__gte=fecha_desde)
+    
+    if fecha_hasta:
+        consultas = consultas.filter(fecha__lte=fecha_hasta)
+    
+    # Obtener todas las mascotas para el dropdown de filtro
+    mascotas = Paciente.objects.all()
+    
+    # Estadísticas
+    total_consultas = consultas.count()
+    
+    context = {
+        "consultas": consultas,
+        "mascotas": mascotas,
+        "busqueda": busqueda,
+        "mascota_id": mascota_id,
+        "fecha_desde": fecha_desde,
+        "fecha_hasta": fecha_hasta,
+        "total_consultas": total_consultas,
+    }
+    return render(request, "home/consulta_list.html", context)
