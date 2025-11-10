@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Control de Caducidad{% endblock %}
+{% block content %}
+<h2>Control de Caducidad</h2>
+<h3>Productos Caducados</h3>
+<div class="table-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Producto</th>
+      <th>Fecha caducidad</th>
+      <th>Días vencido</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for p in expirados %}
+    <tr class="danger">
+      <td>{{ p.producto.id_producto }}</td>
+      <td>{{ p.producto.nombre }}</td>
+      <td>{{ p.expiration_date|date:'d/m/Y' }}</td>
+      <td>{{ p.expiration_date|timesince }} vencido</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No hay productos caducados.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<h3 style="margin-top:2rem;">Próximos a Caducar (30 días)</h3>
+<div class="table-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Producto</th>
+      <th>Fecha caducidad</th>
+      <th>Días restantes</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for p in proximos %}
+    <tr class="warning">
+      <td>{{ p.meta.producto.id_producto }}</td>
+      <td>{{ p.meta.producto.nombre }}</td>
+      <td>{{ p.meta.expiration_date|date:'d/m/Y' }}</td>
+      <td>{{ p.dias }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No hay productos próximos a caducar.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

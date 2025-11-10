@@ -4,214 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PetCare - Sistema de Gestión Veterinaria{% endblock %}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            margin-left: 0;
-            transition: margin-left 0.3s ease;
-        }
-        body.sidebar-open {
-            margin-left: 280px;
-        }
-        .navbar {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .menu-toggle {
-            background-color: #34495e;
-            color: white;
-            border: none;
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 1.2rem;
-            transition: background-color 0.3s;
-        }
-        .menu-toggle:hover {
-            background-color: #1abc9c;
-        }
-        .navbar h1 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
-            background-color: #34495e;
-            color: white;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            z-index: 200;
-            padding-top: 70px;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-header {
-            padding: 1rem;
-            background-color: #2c3e50;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-bottom: 2px solid #1abc9c;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .sidebar-menu li {
-            border-bottom: 1px solid #2c3e50;
-        }
-        .sidebar-menu a {
-            display: block;
-            padding: 1rem 1.5rem;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s, padding-left 0.3s;
-        }
-        .sidebar-menu a:hover {
-            background-color: #1abc9c;
-            padding-left: 2rem;
-        }
-        .sidebar-menu a .icon {
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
-        }
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 150;
-        }
-        .sidebar-overlay.active {
-            display: block;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            margin-top: 90px;
-            transition: margin-left 0.3s ease;
-        }
-        .messages {
-            margin: 1rem 0;
-        }
-        .message {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-        }
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #34495e;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-            margin-right: 0.5rem;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: #3498db;
-            color: white;
-        }
-        .btn-success {
-            background-color: #27ae60;
-            color: white;
-        }
-        .btn-warning {
-            background-color: #f39c12;
-            color: white;
-        }
-        .btn-danger {
-            background-color: #e74c3c;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #95a5a6;
-            color: white;
-        }
-        .btn:hover {
-            opacity: 0.8;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .form-group textarea {
-            min-height: 100px;
-        }
-        .form-actions {
-            margin-top: 1.5rem;
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <!-- Overlay oscuro cuando el sidebar está abierto -->
@@ -223,14 +17,20 @@
             ☰
         </button>
         <h1>🐾 PetCare - Sistema de Gestión Veterinaria</h1>
-        <div style="margin-left: auto;">
-            <a href="{% url 'carrito_ver' %}" style="background-color: #27ae60; color: white; padding: 0.75rem 1.5rem; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: background-color 0.3s;">
-                <span style="font-size: 1.3rem;">🛒</span>
-                <span style="font-weight: bold;">Carrito</span>
+        <div class="nav-actions">
+                {% if user.is_authenticated %}
+                <span style="color:#ecf0f1; margin-right: .5rem;">Hola, <strong>{{ user.username }}</strong></span>
+                <a href="{% url 'password_change' %}">Cambiar contraseña</a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                     {% csrf_token %}
+                     <button type="submit" style="background:#dc3545;">Salir</button>
+                </form>
+                {% else %}
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+            <a href="{% url 'carrito_ver' %}">🛒 Carrito
                 {% if request.session.carrito %}
-                <span style="background-color: #e74c3c; border-radius: 50%; padding: 0.2rem 0.5rem; font-size: 0.8rem; min-width: 20px; text-align: center;">
-                    {{ request.session.carrito|length }}
-                </span>
+                <span style="background:#e74c3c; border-radius:999px; padding:.1rem .45rem; font-size:.75rem;">{{ request.session.carrito|length }}</span>
                 {% endif %}
             </a>
         </div>
@@ -238,9 +38,8 @@
 
     <!-- Sidebar lateral desplegable -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            📋 Módulos del Sistema
-        </div>
+        <h3>📋 Módulos del Sistema</h3>
+
         <ul class="sidebar-menu">
             <li>
                 <a href="{% url 'index' %}">
@@ -248,106 +47,61 @@
                     Inicio
                 </a>
             </li>
-            <li>
-                <a href="{% url 'propietario_list' %}">
-                    <span class="icon">👤</span>
-                    Propietarios
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'pacientes_list' %}">
-                    <span class="icon">🐕</span>
-                    Pacientes (Mascotas)
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'empleado_list' %}">
-                    <span class="icon">👨‍⚕️</span>
-                    Empleados
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'servicio_list' %}">
-                    <span class="icon">🔧</span>
-                    Servicios
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'producto_list' %}">
-                    <span class="icon">📦</span>
-                    Productos
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'inventario_list' %}">
-                    <span class="icon">📊</span>
-                    Inventario
-                </a>
-            </li>
-            <li style="border-top: 2px solid #1abc9c; margin-top: 0.5rem; padding-top: 0.5rem;">
-                <a href="{% url 'tienda_productos' %}">
-                    <span class="icon">🛒</span>
-                    Tienda / Ventas
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'carrito_ver' %}">
-                    <span class="icon">🛍️</span>
-                    Ver Carrito
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'vacuna_list' %}">
-                    <span class="icon">💉</span>
-                    Vacunas
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'vacunacion_list' %}">
-                    <span class="icon">📝</span>
-                    Vacunaciones
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'historialclinico_list' %}">
-                    <span class="icon">📋</span>
-                    Historiales Clínicos
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'datosconsulta_list' %}">
-                    <span class="icon">🩺</span>
-                    Consultas
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'aseomascotas_list' %}">
-                    <span class="icon">🛁</span>
-                    Aseos
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'hotel_list' %}">
-                    <span class="icon">🏨</span>
-                    Hotel
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'factura_list' %}">
-                    <span class="icon">🧾</span>
-                    Facturas
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'pago_list' %}">
-                    <span class="icon">💳</span>
-                    Pagos
-                </a>
-            </li>
         </ul>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">🩺</span> Gestión Clínica <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'propietario_list' %}"><span class="icon">👤</span> Propietarios</a></li>
+                <li><a href="{% url 'pacientes_list' %}"><span class="icon">🐕</span> Pacientes</a></li>
+                <li><a href="{% url 'cita_calendario' %}"><span class="icon">📅</span> Calendario de Citas</a></li>
+                <li><a href="{% url 'datosconsulta_list' %}"><span class="icon">🩺</span> Consultas</a></li>
+                <li><a href="{% url 'historialclinico_list' %}"><span class="icon">📋</span> Historiales Clínicos</a></li>
+                <li><a href="{% url 'vacuna_list' %}"><span class="icon">💉</span> Vacunas</a></li>
+                <li><a href="{% url 'vacunacion_list' %}"><span class="icon">📝</span> Vacunaciones</a></li>
+                <li><a href="{% url 'aseomascotas_list' %}"><span class="icon">🛁</span> Aseo de Mascotas</a></li>
+                <li><a href="{% url 'hotel_list' %}"><span class="icon">🏨</span> Hotel</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">🗂️</span> Catálogo e Inventario <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'servicio_list' %}"><span class="icon">🔧</span> Servicios</a></li>
+                <li><a href="{% url 'producto_list' %}"><span class="icon">📦</span> Productos</a></li>
+                <li><a href="{% url 'inventario_list' %}"><span class="icon">📊</span> Inventario</a></li>
+                <li><a href="{% url 'movimientos_inventario' %}"><span class="icon">🔄</span> Movimientos {% if nav_badges.movimientos_recent_count > 0 %}<span class="badge badge-info">{{ nav_badges.movimientos_recent_count }}</span>{% endif %}</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">�</span> Ventas <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'tienda_productos' %}"><span class="icon">🛍️</span> Tienda</a></li>
+                <li><a href="{% url 'carrito_ver' %}"><span class="icon">🧺</span> Carrito</a></li>
+                <li><a href="{% url 'factura_list' %}"><span class="icon">🧾</span> Facturas</a></li>
+                <li><a href="{% url 'pago_list' %}"><span class="icon">💳</span> Pagos</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">📈</span> Reportes <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'productos_bajo_stock' %}"><span class="icon">⚠️</span> Stock Bajo {% if nav_badges.low_stock_count > 0 %}<span class="badge badge-low">{{ nav_badges.low_stock_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'productos_caducidad' %}"><span class="icon">⏳</span> Caducidad {% if nav_badges.exp_count > 0 %}<span class="badge badge-soon">{{ nav_badges.exp_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'reporte_mas_vendidos' %}"><span class="icon">🏆</span> Más Vendidos</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group">
+            <summary><span class="icon">⚙️</span> Administración <span class="chev">▸</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'empleado_list' %}"><span class="icon">�‍⚕️</span> Empleados</a></li>
+            </ul>
+        </details>
     </div>
 
-    <div class="container">
+    <div class="main">
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -358,7 +112,7 @@
         </div>
         {% endif %}
 
-        <div class="content">
+        <div class="card">
             {% block content %}
             {% endblock %}
         </div>

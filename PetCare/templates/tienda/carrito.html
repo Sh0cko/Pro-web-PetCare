@@ -10,7 +10,7 @@
     <table>
         <thead>
             <tr>
-                <th>Producto</th>
+                <th>Producto/Servicio</th>
                 <th>Precio Unitario</th>
                 <th>Cantidad</th>
                 <th>Subtotal</th>
@@ -21,25 +21,42 @@
             {% for item in items_carrito %}
             <tr>
                 <td>
-                    <strong>{{ item.producto.nombre }}</strong><br>
-                    <small style="color: #7f8c8d;">{{ item.producto.descripcion|truncatewords:10|default:"" }}</small>
+                    <strong>
+                        {% if item.tipo == 'servicio' %}🧰{% else %}📦{% endif %}
+                        {{ item.obj.nombre }}
+                    </strong><br>
+                    <small style="color: #7f8c8d;">
+                        {% if item.tipo == 'servicio' %}
+                            {{ item.obj.descripcion|truncatewords:10|default:"" }}
+                        {% else %}
+                            {{ item.obj.descripcion|truncatewords:10|default:"" }}
+                        {% endif %}
+                    </small>
                 </td>
                 <td>${{ item.precio }}</td>
                 <td>
-                    <form method="post" action="{% url 'carrito_actualizar' item.producto.id_producto %}" style="display: inline-block;">
+                    {% if item.tipo == 'servicio' %}
+                    <form method="post" action="{% url 'carrito_actualizar_servicio' item.obj.id_servicio %}" style="display: inline-block;">
+                    {% else %}
+                    <form method="post" action="{% url 'carrito_actualizar' item.obj.id_producto %}" style="display: inline-block;">
+                    {% endif %}
                         {% csrf_token %}
                         <input type="number" 
                                name="cantidad" 
                                value="{{ item.cantidad }}" 
                                min="1" 
-                               max="{{ item.producto.cantidad }}"
+                               {% if item.tipo != 'servicio' %}max="{{ item.obj.cantidad }}"{% endif %}
                                style="width: 70px; padding: 0.3rem; border: 1px solid #ddd; border-radius: 4px;"
                                onchange="this.form.submit()">
                     </form>
                 </td>
                 <td style="font-weight: bold; color: #27ae60;">${{ item.subtotal }}</td>
                 <td>
-                    <a href="{% url 'carrito_eliminar' item.producto.id_producto %}" 
+                    {% if item.tipo == 'servicio' %}
+                    <a href="{% url 'carrito_eliminar_servicio' item.obj.id_servicio %}" 
+                    {% else %}
+                    <a href="{% url 'carrito_eliminar' item.obj.id_producto %}" 
+                    {% endif %}
                        class="btn btn-danger"
                        onclick="return confirm('¿Eliminar este producto del carrito?')">
                         🗑️ Eliminar

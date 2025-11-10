@@ -37,6 +37,16 @@
         <label for="descripcion">Descripción</label>
         <textarea id="descripcion" name="descripcion">{{ producto.descripcion|default:'' }}</textarea>
     </div>
+        <hr style="margin:1.5rem 0; opacity:.4;">
+        <h3 style="margin-bottom:.75rem; font-size:1rem; color:#055;">Control de inventario</h3>
+        <div class="form-group">
+            <label for="low_stock_threshold">Umbral de bajo stock</label>
+            <input type="number" id="low_stock_threshold" name="low_stock_threshold" min="0" placeholder="Ej: 5" value="{{ producto.meta.low_stock_threshold|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="expiration_date">Fecha de caducidad</label>
+            <input type="date" id="expiration_date" name="expiration_date" value="{{ producto.meta.expiration_date|date:'Y-m-d'|default:'' }}">
+        </div>
     
     <div class="form-actions">
         <button type="submit" class="btn btn-success">💾 Guardar</button>

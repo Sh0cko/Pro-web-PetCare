@@ -1,19 +1,45 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from .models import (
     Aseomascotas, Datosconsulta, Empleado, Factura, FacturaServicio,
     Historialclinico, Hotel, Inventario, Pacientes, Pago, PagoFactura,
-    Producto, Propietario, Servicio, Vacuna, Vacunacion
+    Producto, Propietario, Servicio, Vacuna, Vacunacion, InventoryMovement, ProductMeta, Cita
 )
+# ===================== Utilidad para registrar movimientos =====================
+def log_movement(producto, change_type, qty_change, previous_qty, new_qty, source=None, note=None, user=None):
+    try:
+        InventoryMovement.objects.create(
+            producto=producto,
+            change_type=change_type,
+            quantity_change=qty_change,
+            previous_quantity=previous_qty,
+            new_quantity=new_qty,
+            source=source,
+            note=note,
+            user=user if (user and getattr(user, 'is_authenticated', False)) else None
+        )
+    except Exception:
+        # Evitar que un error de log detenga el flujo principal
+        pass
+
+from django.db.models import Q
 
 # Vista principal
+@login_required
 def index(request):
     return render(request, 'index.html')
 
 # ==================== CRUD PROPIETARIO ====================
 def propietario_list(request):
+    q = request.GET.get('q', '').strip()
     propietarios = Propietario.objects.all()
-    return render(request, 'propietario/list.html', {'propietarios': propietarios})
+    if q:
+        propietarios = propietarios.filter(
+            Q(nombre__icontains=q) | Q(id_propietario__icontains=q) | Q(email__icontains=q)
+        )
+    return render(request, 'propietario/list.html', {'propietarios': propietarios, 'q': q})
 
 def propietario_create(request):
     if request.method == 'POST':
@@ -59,8 +85,13 @@ def propietario_delete(request, pk):
 
 # ==================== CRUD PACIENTES ====================
 def pacientes_list(request):
-    pacientes = Pacientes.objects.all()
-    return render(request, 'pacientes/list.html', {'pacientes': pacientes})
+    q = request.GET.get('q', '').strip()
+    pacientes = Pacientes.objects.select_related('id_propietario').all()
+    if q:
+        pacientes = pacientes.filter(
+            Q(nombre__icontains=q) | Q(especie__icontains=q) | Q(raza__icontains=q) | Q(id_propietario__nombre__icontains=q) | Q(id__icontains=q)
+        )
+    return render(request, 'pacientes/list.html', {'pacientes': pacientes, 'q': q})
 
 def pacientes_create(request):
     propietarios = Propietario.objects.all()
@@ -110,8 +141,13 @@ def pacientes_delete(request, pk):
 
 # ==================== CRUD EMPLEADO ====================
 def empleado_list(request):
+    q = request.GET.get('q', '').strip()
     empleados = Empleado.objects.all()
-    return render(request, 'empleado/list.html', {'empleados': empleados})
+    if q:
+        empleados = empleados.filter(
+            Q(nombre__icontains=q) | Q(cargo__icontains=q) | Q(id_empleado__icontains=q)
+        )
+    return render(request, 'empleado/list.html', {'empleados': empleados, 'q': q})
 
 def empleado_create(request):
     if request.method == 'POST':
@@ -157,8 +193,13 @@ def empleado_delete(request, pk):
 
 # ==================== CRUD SERVICIO ====================
 def servicio_list(request):
+    q = request.GET.get('q', '').strip()
     servicios = Servicio.objects.all()
-    return render(request, 'servicio/list.html', {'servicios': servicios})
+    if q:
+        servicios = servicios.filter(
+            Q(nombre__icontains=q) | Q(descripcion__icontains=q) | Q(id_servicio__icontains=q)
+        )
+    return render(request, 'servicio/list.html', {'servicios': servicios, 'q': q})
 
 def servicio_create(request):
     if request.method == 'POST':
@@ -202,8 +243,13 @@ def servicio_delete(request, pk):
 
 # ==================== CRUD PRODUCTO ====================
 def producto_list(request):
+    q = request.GET.get('q', '').strip()
     productos = Producto.objects.all()
-    return render(request, 'producto/list.html', {'productos': productos})
+    if q:
+        productos = productos.filter(
+            Q(nombre__icontains=q) | Q(descripcion__icontains=q) | Q(id_producto__icontains=q)
+        )
+    return render(request, 'producto/list.html', {'productos': productos, 'q': q})
 
 def producto_create(request):
     if request.method == 'POST':
@@ -215,6 +261,19 @@ def producto_create(request):
                 cantidad=request.POST.get('cantidad'),
                 descripcion=request.POST.get('descripcion')
             )
+            # Crear meta opcional si viene información
+            prod = Producto.objects.get(id_producto=request.POST['id_producto'])
+            threshold = request.POST.get('low_stock_threshold')
+            expiration = request.POST.get('expiration_date')
+            if threshold or expiration:
+                ProductMeta.objects.get_or_create(
+                    producto=prod,
+                    defaults={
+                        'low_stock_threshold': int(threshold) if threshold else 5,
+                        'expiration_date': expiration if expiration else None
+                    }
+                )
+            log_movement(prod, 'CREACION', int(request.POST.get('cantidad') or 0), 0, int(request.POST.get('cantidad') or 0), source='producto_create', user=request.user)
             messages.success(request, 'Producto creado exitosamente')
             return redirect('producto_list')
         except Exception as e:
@@ -225,11 +284,25 @@ def producto_update(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
     if request.method == 'POST':
         try:
+            prev_qty = producto.cantidad or 0
             producto.nombre = request.POST['nombre']
             producto.precio = request.POST.get('precio')
             producto.cantidad = request.POST.get('cantidad')
             producto.descripcion = request.POST.get('descripcion')
             producto.save()
+            # Actualizar meta
+            threshold = request.POST.get('low_stock_threshold')
+            expiration = request.POST.get('expiration_date')
+            if threshold or expiration:
+                meta, _ = ProductMeta.objects.get_or_create(producto=producto)
+                if threshold:
+                    meta.low_stock_threshold = int(threshold)
+                if expiration:
+                    meta.expiration_date = expiration
+                meta.save()
+            new_qty = producto.cantidad or 0
+            if new_qty != prev_qty:
+                log_movement(producto, 'ACTUALIZACION', new_qty - prev_qty, prev_qty, new_qty, source='producto_update', user=request.user)
             messages.success(request, 'Producto actualizado exitosamente')
             return redirect('producto_list')
         except Exception as e:
@@ -249,8 +322,13 @@ def producto_delete(request, pk):
 
 # ==================== CRUD INVENTARIO ====================
 def inventario_list(request):
+    q = request.GET.get('q', '').strip()
     inventarios = Inventario.objects.all()
-    return render(request, 'inventario/list.html', {'inventarios': inventarios})
+    if q:
+        inventarios = inventarios.filter(
+            Q(nombre__icontains=q) | Q(descripcion__icontains=q) | Q(id_producto__icontains=q)
+        )
+    return render(request, 'inventario/list.html', {'inventarios': inventarios, 'q': q})
 
 def inventario_create(request):
     if request.method == 'POST':
@@ -298,8 +376,13 @@ def inventario_delete(request, pk):
 
 # ==================== CRUD VACUNA ====================
 def vacuna_list(request):
+    q = request.GET.get('q', '').strip()
     vacunas = Vacuna.objects.all()
-    return render(request, 'vacuna/list.html', {'vacunas': vacunas})
+    if q:
+        vacunas = vacunas.filter(
+            Q(nombre__icontains=q) | Q(descripcion__icontains=q) | Q(id_vacuna__icontains=q)
+        )
+    return render(request, 'vacuna/list.html', {'vacunas': vacunas, 'q': q})
 
 def vacuna_create(request):
     if request.method == 'POST':
@@ -341,8 +424,13 @@ def vacuna_delete(request, pk):
 
 # ==================== CRUD VACUNACION ====================
 def vacunacion_list(request):
-    vacunaciones = Vacunacion.objects.all()
-    return render(request, 'vacunacion/list.html', {'vacunaciones': vacunaciones})
+    q = request.GET.get('q', '').strip()
+    vacunaciones = Vacunacion.objects.select_related('id_mascota','id_vacuna').all()
+    if q:
+        vacunaciones = vacunaciones.filter(
+            Q(id_vacunacion__icontains=q) | Q(veterinario__icontains=q) | Q(id_mascota__nombre__icontains=q) | Q(id_vacuna__nombre__icontains=q)
+        )
+    return render(request, 'vacunacion/list.html', {'vacunaciones': vacunaciones, 'q': q})
 
 def vacunacion_create(request):
     pacientes = Pacientes.objects.all()
@@ -392,8 +480,13 @@ def vacunacion_delete(request, pk):
 
 # ==================== CRUD HISTORIAL CLINICO ====================
 def historialclinico_list(request):
-    historiales = Historialclinico.objects.all()
-    return render(request, 'historialclinico/list.html', {'historiales': historiales})
+    q = request.GET.get('q', '').strip()
+    historiales = Historialclinico.objects.select_related('id_mascota').all()
+    if q:
+        historiales = historiales.filter(
+            Q(id_historial__icontains=q) | Q(id_mascota__nombre__icontains=q) | Q(observaciones__icontains=q)
+        )
+    return render(request, 'historialclinico/list.html', {'historiales': historiales, 'q': q})
 
 def historialclinico_create(request):
     pacientes = Pacientes.objects.all()
@@ -445,8 +538,13 @@ def historialclinico_delete(request, pk):
 
 # ==================== CRUD DATOS CONSULTA ====================
 def datosconsulta_list(request):
-    consultas = Datosconsulta.objects.all()
-    return render(request, 'datosconsulta/list.html', {'consultas': consultas})
+    q = request.GET.get('q', '').strip()
+    consultas = Datosconsulta.objects.select_related('id_mascota').all()
+    if q:
+        consultas = consultas.filter(
+            Q(id_consulta__icontains=q) | Q(motivo__icontains=q) | Q(id_mascota__nombre__icontains=q) | Q(diagnostico__icontains=q)
+        )
+    return render(request, 'datosconsulta/list.html', {'consultas': consultas, 'q': q})
 
 def datosconsulta_create(request):
     pacientes = Pacientes.objects.all()
@@ -496,8 +594,13 @@ def datosconsulta_delete(request, pk):
 
 # ==================== CRUD ASEO MASCOTAS ====================
 def aseomascotas_list(request):
-    aseos = Aseomascotas.objects.all()
-    return render(request, 'aseomascotas/list.html', {'aseos': aseos})
+    q = request.GET.get('q', '').strip()
+    aseos = Aseomascotas.objects.select_related('id_mascota','id_propietario').all()
+    if q:
+        aseos = aseos.filter(
+            Q(id_aseo__icontains=q) | Q(id_mascota__nombre__icontains=q) | Q(id_propietario__nombre__icontains=q) | Q(tipo_banio__icontains=q)
+        )
+    return render(request, 'aseomascotas/list.html', {'aseos': aseos, 'q': q})
 
 def aseomascotas_create(request):
     pacientes = Pacientes.objects.all()
@@ -549,8 +652,13 @@ def aseomascotas_delete(request, pk):
 
 # ==================== CRUD HOTEL ====================
 def hotel_list(request):
-    hoteles = Hotel.objects.all()
-    return render(request, 'hotel/list.html', {'hoteles': hoteles})
+    q = request.GET.get('q', '').strip()
+    hoteles = Hotel.objects.select_related('id_mascota').all()
+    if q:
+        hoteles = hoteles.filter(
+            Q(id_hotel__icontains=q) | Q(habitacion__icontains=q) | Q(id_mascota__nombre__icontains=q)
+        )
+    return render(request, 'hotel/list.html', {'hoteles': hoteles, 'q': q})
 
 def hotel_create(request):
     pacientes = Pacientes.objects.all()
@@ -600,8 +708,13 @@ def hotel_delete(request, pk):
 
 # ==================== CRUD FACTURA ====================
 def factura_list(request):
-    facturas = Factura.objects.all()
-    return render(request, 'factura/list.html', {'facturas': facturas})
+    q = request.GET.get('q', '').strip()
+    facturas = Factura.objects.select_related('id_propietario').all()
+    if q:
+        facturas = facturas.filter(
+            Q(id_factura__icontains=q) | Q(id_propietario__nombre__icontains=q)
+        )
+    return render(request, 'factura/list.html', {'facturas': facturas, 'q': q})
 
 def factura_create(request):
     propietarios = Propietario.objects.all()
@@ -647,8 +760,13 @@ def factura_delete(request, pk):
 
 # ==================== CRUD PAGO ====================
 def pago_list(request):
-    pagos = Pago.objects.all()
-    return render(request, 'pago/list.html', {'pagos': pagos})
+    q = request.GET.get('q', '').strip()
+    pagos = Pago.objects.select_related('id_propietario').all()
+    if q:
+        pagos = pagos.filter(
+            Q(id_pago__icontains=q) | Q(id_propietario__nombre__icontains=q) | Q(metodo__icontains=q)
+        )
+    return render(request, 'pago/list.html', {'pagos': pagos, 'q': q})
 
 def pago_create(request):
     propietarios = Propietario.objects.all()
@@ -700,9 +818,13 @@ from decimal import Decimal
 import json
 
 def tienda_productos(request):
-    """Catálogo de productos disponibles para la venta"""
+    """Catálogo de productos y servicios disponibles para la venta"""
     productos = Producto.objects.filter(cantidad__gt=0)  # Solo productos con stock
-    return render(request, 'tienda/catalogo.html', {'productos': productos})
+    servicios = Servicio.objects.all()
+    return render(request, 'tienda/catalogo.html', {
+        'productos': productos,
+        'servicios': servicios
+    })
 
 def carrito_ver(request):
     """Ver el carrito de compras"""
@@ -710,18 +832,39 @@ def carrito_ver(request):
     items_carrito = []
     total = Decimal('0.00')
     
-    for producto_id, item in carrito.items():
+    for key, item in carrito.items():
         try:
-            producto = Producto.objects.get(id_producto=producto_id)
-            subtotal = Decimal(str(item['precio'])) * item['cantidad']
-            items_carrito.append({
-                'producto': producto,
-                'cantidad': item['cantidad'],
-                'precio': Decimal(str(item['precio'])),
-                'subtotal': subtotal
-            })
-            total += subtotal
-        except Producto.DoesNotExist:
+            # Detectar tipo por clave o marca en el item
+            es_servicio = (str(key).startswith('S:') or item.get('tipo') == 'servicio')
+            if es_servicio:
+                servicio_id = str(key).split(':', 1)[1] if ':' in str(key) else key
+                servicio = Servicio.objects.get(id_servicio=servicio_id)
+                precio = Decimal(str(item['precio']))
+                subtotal = precio * item['cantidad']
+                items_carrito.append({
+                    'tipo': 'servicio',
+                    'obj': servicio,
+                    'cantidad': item['cantidad'],
+                    'precio': precio,
+                    'subtotal': subtotal,
+                    'key': key,
+                })
+                total += subtotal
+            else:
+                producto_id = key
+                producto = Producto.objects.get(id_producto=producto_id)
+                precio = Decimal(str(item['precio']))
+                subtotal = precio * item['cantidad']
+                items_carrito.append({
+                    'tipo': 'producto',
+                    'obj': producto,
+                    'cantidad': item['cantidad'],
+                    'precio': precio,
+                    'subtotal': subtotal,
+                    'key': key,
+                })
+                total += subtotal
+        except (Producto.DoesNotExist, Servicio.DoesNotExist):
             continue
     
     return render(request, 'tienda/carrito.html', {
@@ -767,6 +910,37 @@ def carrito_agregar(request, producto_id):
     
     return redirect('tienda_productos')
 
+def carrito_agregar_servicio(request, servicio_id):
+    """Agregar servicio al carrito"""
+    if request.method == 'POST':
+        try:
+            servicio = get_object_or_404(Servicio, id_servicio=servicio_id)
+            cantidad = int(request.POST.get('cantidad', 1))
+
+            if cantidad <= 0:
+                messages.error(request, 'La cantidad debe ser mayor a 0')
+                return redirect('tienda_productos')
+
+            carrito = request.session.get('carrito', {})
+            key = f'S:{servicio_id}'
+
+            if key in carrito:
+                carrito[key]['cantidad'] += cantidad
+            else:
+                carrito[key] = {
+                    'tipo': 'servicio',
+                    'nombre': servicio.nombre,
+                    'precio': float(servicio.costo or 0),
+                    'cantidad': cantidad,
+                }
+
+            request.session['carrito'] = carrito
+            request.session.modified = True
+            messages.success(request, f'{servicio.nombre} agregado al carrito')
+        except Exception as e:
+            messages.error(request, f'Error al agregar servicio: {str(e)}')
+    return redirect('tienda_productos')
+
 def carrito_actualizar(request, producto_id):
     """Actualizar cantidad en el carrito"""
     if request.method == 'POST':
@@ -795,6 +969,26 @@ def carrito_actualizar(request, producto_id):
     
     return redirect('carrito_ver')
 
+def carrito_actualizar_servicio(request, servicio_id):
+    """Actualizar cantidad de un servicio en el carrito"""
+    if request.method == 'POST':
+        try:
+            cantidad = int(request.POST.get('cantidad', 1))
+            key = f'S:{servicio_id}'
+            carrito = request.session.get('carrito', {})
+            if key in carrito:
+                if cantidad > 0:
+                    carrito[key]['cantidad'] = cantidad
+                    messages.success(request, 'Cantidad actualizada')
+                else:
+                    del carrito[key]
+                    messages.success(request, 'Servicio eliminado del carrito')
+                request.session['carrito'] = carrito
+                request.session.modified = True
+        except Exception as e:
+            messages.error(request, f'Error al actualizar servicio en carrito: {str(e)}')
+    return redirect('carrito_ver')
+
 def carrito_eliminar(request, producto_id):
     """Eliminar producto del carrito"""
     try:
@@ -809,6 +1003,20 @@ def carrito_eliminar(request, producto_id):
     
     return redirect('carrito_ver')
 
+def carrito_eliminar_servicio(request, servicio_id):
+    """Eliminar servicio del carrito"""
+    try:
+        key = f'S:{servicio_id}'
+        carrito = request.session.get('carrito', {})
+        if key in carrito:
+            del carrito[key]
+            request.session['carrito'] = carrito
+            request.session.modified = True
+            messages.success(request, 'Servicio eliminado del carrito')
+    except Exception as e:
+        messages.error(request, f'Error al eliminar servicio del carrito: {str(e)}')
+    return redirect('carrito_ver')
+
 def carrito_vaciar(request):
     """Vaciar todo el carrito"""
     if 'carrito' in request.session:
@@ -817,6 +1025,7 @@ def carrito_vaciar(request):
         messages.success(request, 'Carrito vaciado')
     return redirect('carrito_ver')
 
+@login_required
 def checkout(request):
     """Proceso de pago/checkout"""
     carrito = request.session.get('carrito', {})
@@ -829,18 +1038,34 @@ def checkout(request):
     items_carrito = []
     total = Decimal('0.00')
     
-    for producto_id, item in carrito.items():
+    for key, item in carrito.items():
         try:
-            producto = Producto.objects.get(id_producto=producto_id)
-            subtotal = Decimal(str(item['precio'])) * item['cantidad']
-            items_carrito.append({
-                'producto': producto,
-                'cantidad': item['cantidad'],
-                'precio': Decimal(str(item['precio'])),
-                'subtotal': subtotal
-            })
-            total += subtotal
-        except Producto.DoesNotExist:
+            es_servicio = (str(key).startswith('S:') or item.get('tipo') == 'servicio')
+            precio = Decimal(str(item['precio']))
+            if es_servicio:
+                servicio_id = str(key).split(':', 1)[1] if ':' in str(key) else key
+                servicio = Servicio.objects.get(id_servicio=servicio_id)
+                subtotal = precio * item['cantidad']
+                items_carrito.append({
+                    'tipo': 'servicio',
+                    'obj': servicio,
+                    'cantidad': item['cantidad'],
+                    'precio': precio,
+                    'subtotal': subtotal,
+                })
+                total += subtotal
+            else:
+                producto = Producto.objects.get(id_producto=key)
+                subtotal = precio * item['cantidad']
+                items_carrito.append({
+                    'tipo': 'producto',
+                    'obj': producto,
+                    'cantidad': item['cantidad'],
+                    'precio': precio,
+                    'subtotal': subtotal,
+                })
+                total += subtotal
+        except (Producto.DoesNotExist, Servicio.DoesNotExist):
             continue
     
     propietarios = Propietario.objects.all()
@@ -851,6 +1076,7 @@ def checkout(request):
         'propietarios': propietarios
     })
 
+@login_required
 def procesar_pago(request):
     """Procesar el pago y crear factura"""
     if request.method == 'POST':
@@ -871,7 +1097,7 @@ def procesar_pago(request):
             
             # Calcular total
             total = Decimal('0.00')
-            for producto_id, item in carrito.items():
+            for key, item in carrito.items():
                 subtotal = Decimal(str(item['precio'])) * item['cantidad']
                 total += subtotal
             
@@ -899,28 +1125,83 @@ def procesar_pago(request):
             )
             
             # Actualizar inventario y stock de productos
-            for producto_id, item in carrito.items():
-                try:
-                    producto = Producto.objects.get(id_producto=producto_id)
-                    # Reducir cantidad en stock
-                    producto.cantidad -= item['cantidad']
-                    producto.save()
-                except Producto.DoesNotExist:
-                    continue
-            
+            for key, item in carrito.items():
+                # Solo reducir stock para productos
+                if not (str(key).startswith('S:') or item.get('tipo') == 'servicio'):
+                    try:
+                        producto = Producto.objects.get(id_producto=key)
+                        prev_qty = producto.cantidad or 0
+                        producto.cantidad -= item['cantidad']
+                        producto.save()
+                        log_movement(producto, 'VENTA', -item['cantidad'], prev_qty, producto.cantidad or 0, source='checkout', note=f"Factura {id_factura}", user=request.user)
+                    except Producto.DoesNotExist:
+                        continue
             # Limpiar carrito
-            del request.session['carrito']
-            request.session.modified = True
-            
+            if 'carrito' in request.session:
+                del request.session['carrito']
+                request.session.modified = True
             messages.success(request, f'¡Compra realizada exitosamente! Factura: {id_factura}')
             return redirect('compra_exitosa', id_factura=id_factura)
-            
         except Exception as e:
             messages.error(request, f'Error al procesar el pago: {str(e)}')
             return redirect('checkout')
-    
     return redirect('checkout')
 
+@login_required
+def movimientos_inventario(request):
+    q = request.GET.get('q', '').strip()
+    movimientos = InventoryMovement.objects.select_related('producto').all()
+    if q:
+        movimientos = movimientos.filter(producto__nombre__icontains=q) | movimientos.filter(producto__id_producto__icontains=q) | movimientos.filter(change_type__icontains=q)
+    return render(request, 'inventario/movimientos.html', {'movimientos': movimientos[:500], 'q': q})
+
+@login_required
+def productos_bajo_stock(request):
+    productos = Producto.objects.all()
+    alertas = []
+    for p in productos:
+        meta = getattr(p, 'meta', None)
+        threshold = meta.low_stock_threshold if meta else 5
+        qty = p.cantidad or 0
+        if qty <= threshold:
+            alertas.append({'producto': p, 'cantidad': qty, 'threshold': threshold})
+    return render(request, 'reportes/low_stock.html', {'alertas': alertas})
+
+@login_required
+def productos_caducidad(request):
+    hoy = timezone.now().date()
+    proximos = []
+    expirados = []
+    metas = ProductMeta.objects.select_related('producto').all()
+    for m in metas:
+        if m.expiration_date:
+            delta = (m.expiration_date - hoy).days
+            if delta < 0:
+                expirados.append(m)
+            elif delta <= 30:
+                proximos.append({'meta': m, 'dias': delta})
+    return render(request, 'reportes/expiration.html', {'expirados': expirados, 'proximos': proximos})
+
+@login_required
+def reporte_mas_vendidos(request):
+    # Agregar por movimientos de tipo VENTA (cantidad negativa)
+    from django.db.models import Sum
+    resumen = (InventoryMovement.objects.filter(change_type='VENTA')
+               .values('producto__id_producto', 'producto__nombre')
+               .annotate(total_vendido=Sum('quantity_change'))
+               .order_by('total_vendido'))  # quantity_change es negativo
+    # Convertir a positivo para mostrar
+    datos = []
+    for r in resumen:
+        datos.append({
+            'id': r['producto__id_producto'],
+            'nombre': r['producto__nombre'],
+            'total': abs(r['total_vendido'] or 0)
+        })
+    return render(request, 'reportes/best_sellers.html', {'productos': datos})
+
+
+@login_required
 def compra_exitosa(request, id_factura):
     """Página de confirmación de compra"""
     try:
@@ -929,3 +1210,157 @@ def compra_exitosa(request, id_factura):
     except Factura.DoesNotExist:
         messages.error(request, 'Factura no encontrada')
         return redirect('tienda_productos')
+
+
+# ==================== SISTEMA DE CITAS ====================
+@login_required
+def cita_calendario(request):
+    """Vista de calendario mensual para citas."""
+    import calendar
+    from datetime import datetime, timedelta
+    
+    # Obtener mes/año de parámetros GET o usar actual
+    year = int(request.GET.get('year', datetime.now().year))
+    month = int(request.GET.get('month', datetime.now().month))
+    
+    # Calcular rango de fechas del mes
+    primer_dia = datetime(year, month, 1).date()
+    ultimo_dia = (primer_dia.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+    
+    # Obtener citas del mes
+    citas = Cita.objects.filter(fecha__gte=primer_dia, fecha__lte=ultimo_dia).select_related('paciente', 'servicio', 'empleado').order_by('fecha', 'hora')
+    
+    # Crear estructura de calendario (matriz semanas x días)
+    cal = calendar.monthcalendar(year, month)
+    
+    # Agrupar citas por fecha
+    citas_por_dia = {}
+    for cita in citas:
+        dia_str = str(cita.fecha.day)
+        if dia_str not in citas_por_dia:
+            citas_por_dia[dia_str] = []
+        citas_por_dia[dia_str].append(cita)
+    
+    # Navegación mes anterior/siguiente
+    mes_anterior = primer_dia - timedelta(days=1)
+    mes_siguiente = ultimo_dia + timedelta(days=1)
+    
+    context = {
+        'year': year,
+        'month': month,
+        'month_name': calendar.month_name[month],
+        'calendar_weeks': cal,
+        'citas_por_dia': citas_por_dia,
+        'mes_anterior': mes_anterior,
+        'mes_siguiente': mes_siguiente,
+        'hoy': datetime.now().date(),
+    }
+    return render(request, 'citas/calendario.html', context)
+
+
+@login_required
+def cita_list(request):
+    """Lista de todas las citas con búsqueda."""
+    q = request.GET.get('q', '').strip()
+    estado = request.GET.get('estado', '').strip()
+    
+    citas = Cita.objects.select_related('paciente', 'servicio', 'empleado').all()
+    
+    if q:
+        citas = citas.filter(
+            Q(paciente__nombre__icontains=q) |
+            Q(motivo__icontains=q) |
+            Q(empleado__nombre__icontains=q)
+        )
+    
+    if estado:
+        citas = citas.filter(estado=estado)
+    
+    return render(request, 'citas/list.html', {
+        'citas': citas,
+        'q': q,
+        'estado': estado,
+        'estados': Cita.ESTADO_CHOICES,
+    })
+
+
+@login_required
+def cita_create(request):
+    """Crear nueva cita."""
+    pacientes = Pacientes.objects.all()
+    servicios = Servicio.objects.all()
+    empleados = Empleado.objects.all()
+    
+    if request.method == 'POST':
+        try:
+            cita = Cita.objects.create(
+                paciente_id=request.POST['paciente'],
+                servicio_id=request.POST.get('servicio') or None,
+                empleado_id=request.POST.get('empleado') or None,
+                fecha=request.POST['fecha'],
+                hora=request.POST['hora'],
+                duracion_minutos=int(request.POST.get('duracion_minutos', 30)),
+                estado=request.POST.get('estado', 'PENDIENTE'),
+                motivo=request.POST.get('motivo', ''),
+                notas=request.POST.get('notas', ''),
+                creado_por=request.user
+            )
+            messages.success(request, f'Cita creada exitosamente para {cita.fecha} {cita.hora}')
+            return redirect('cita_calendario')
+        except Exception as e:
+            messages.error(request, f'Error al crear cita: {str(e)}')
+    
+    return render(request, 'citas/form.html', {
+        'pacientes': pacientes,
+        'servicios': servicios,
+        'empleados': empleados,
+        'estados': Cita.ESTADO_CHOICES,
+    })
+
+
+@login_required
+def cita_update(request, pk):
+    """Editar cita existente."""
+    cita = get_object_or_404(Cita, pk=pk)
+    pacientes = Pacientes.objects.all()
+    servicios = Servicio.objects.all()
+    empleados = Empleado.objects.all()
+    
+    if request.method == 'POST':
+        try:
+            cita.paciente_id = request.POST['paciente']
+            cita.servicio_id = request.POST.get('servicio') or None
+            cita.empleado_id = request.POST.get('empleado') or None
+            cita.fecha = request.POST['fecha']
+            cita.hora = request.POST['hora']
+            cita.duracion_minutos = int(request.POST.get('duracion_minutos', 30))
+            cita.estado = request.POST.get('estado', 'PENDIENTE')
+            cita.motivo = request.POST.get('motivo', '')
+            cita.notas = request.POST.get('notas', '')
+            cita.save()
+            messages.success(request, 'Cita actualizada exitosamente')
+            return redirect('cita_calendario')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar cita: {str(e)}')
+    
+    return render(request, 'citas/form.html', {
+        'cita': cita,
+        'pacientes': pacientes,
+        'servicios': servicios,
+        'empleados': empleados,
+        'estados': Cita.ESTADO_CHOICES,
+    })
+
+
+@login_required
+def cita_delete(request, pk):
+    """Eliminar cita."""
+    cita = get_object_or_404(Cita, pk=pk)
+    if request.method == 'POST':
+        try:
+            cita.delete()
+            messages.success(request, 'Cita eliminada exitosamente')
+        except Exception as e:
+            messages.error(request, f'Error al eliminar cita: {str(e)}')
+        return redirect('cita_calendario')
+    return render(request, 'citas/delete.html', {'cita': cita})

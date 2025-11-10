@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Productos con Stock Bajo{% endblock %}
+{% block content %}
+<h2>Productos con Stock Bajo</h2>
+<p>Se listan productos cuya cantidad es menor o igual al umbral definido.</p>
+<div class="table-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Umbral</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in alertas %}
+    <tr class="{% if item.is_low %}warning{% endif %}">
+      <td>{{ item.producto.id_producto }}</td>
+      <td>{{ item.producto.nombre }}</td>
+      <td>{{ item.cantidad }}</td>
+      <td>{{ item.threshold }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No hay productos con stock bajo.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'PetCare.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -62,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'PetApp.context_processors.nav_counters',
             ],
         },
     },
@@ -123,8 +125,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+# Include the project-level static directory (PetCare/static)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Authentication settings
+# URL name to redirect users to when login is required
+LOGIN_URL = 'login'
+# Where to go after successful login/logout
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'
+
+# Rutas exentas de autenticación (regex relativas, sin prefijo '/')
+LOGIN_EXEMPT_URLS = [
+    r'^login/$',
+    r'^logout/$',
+    r'^password_reset/',
+    r'^reset/',
+    r'^password_reset/done/',
+    r'^admin/',
+]
+
+# Email backend para desarrollo (mostrar emails por consola)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -15,12 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from PetApp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    # Autenticación (login, logout, password change/reset)
+    path('', include('django.contrib.auth.urls')),
+    
+    # Reportes e Inventario avanzado
+    path('inventario/movimientos/', views.movimientos_inventario, name='movimientos_inventario'),
+    path('reportes/stock-bajo/', views.productos_bajo_stock, name='productos_bajo_stock'),
+    path('reportes/caducidad/', views.productos_caducidad, name='productos_caducidad'),
+    path('reportes/mas-vendidos/', views.reporte_mas_vendidos, name='reporte_mas_vendidos'),
     
     # URLs Propietario
     path('propietarios/', views.propietario_list, name='propietario_list'),
@@ -110,10 +118,20 @@ urlpatterns = [
     path('tienda/', views.tienda_productos, name='tienda_productos'),
     path('carrito/', views.carrito_ver, name='carrito_ver'),
     path('carrito/agregar/<str:producto_id>/', views.carrito_agregar, name='carrito_agregar'),
+    path('carrito/agregar-servicio/<str:servicio_id>/', views.carrito_agregar_servicio, name='carrito_agregar_servicio'),
     path('carrito/actualizar/<str:producto_id>/', views.carrito_actualizar, name='carrito_actualizar'),
+    path('carrito/actualizar-servicio/<str:servicio_id>/', views.carrito_actualizar_servicio, name='carrito_actualizar_servicio'),
     path('carrito/eliminar/<str:producto_id>/', views.carrito_eliminar, name='carrito_eliminar'),
+    path('carrito/eliminar-servicio/<str:servicio_id>/', views.carrito_eliminar_servicio, name='carrito_eliminar_servicio'),
     path('carrito/vaciar/', views.carrito_vaciar, name='carrito_vaciar'),
     path('checkout/', views.checkout, name='checkout'),
     path('procesar-pago/', views.procesar_pago, name='procesar_pago'),
     path('compra-exitosa/<str:id_factura>/', views.compra_exitosa, name='compra_exitosa'),
+    
+    # URLs Citas
+    path('citas/calendario/', views.cita_calendario, name='cita_calendario'),
+    path('citas/', views.cita_list, name='cita_list'),
+    path('citas/crear/', views.cita_create, name='cita_create'),
+    path('citas/editar/<int:pk>/', views.cita_update, name='cita_update'),
+    path('citas/eliminar/<int:pk>/', views.cita_delete, name='cita_delete'),
 ]
