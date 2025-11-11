@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if hotel %}Editar{% else %}Crear{% endif %} Reserva Hotel - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if hotel %}Editar Reserva{% else %}Crear Nueva Reserva de Hotel{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_hotel">ID Hotel *</label>
+        <input type="text" id="id_hotel" name="id_hotel" 
+               value="{{ hotel.id_hotel|default:'' }}" 
+               {% if hotel %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_mascota">Mascota</label>
+        <select id="id_mascota" name="id_mascota">
+            <option value="">Seleccione una mascota</option>
+            {% for paciente in pacientes %}
+            <option value="{{ paciente.id }}" 
+                    {% if hotel.id_mascota_id == paciente.id %}selected{% endif %}>
+                {{ paciente.nombre }} ({{ paciente.especie }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha_ingreso">Fecha de Ingreso *</label>
+        <input type="date" id="fecha_ingreso" name="fecha_ingreso" 
+               value="{{ hotel.fecha_ingreso|date:'Y-m-d'|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha_egreso">Fecha de Egreso *</label>
+        <input type="date" id="fecha_egreso" name="fecha_egreso" 
+               value="{{ hotel.fecha_egreso|date:'Y-m-d'|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="habitacion">Habitación</label>
+        <input type="text" id="habitacion" name="habitacion" 
+               value="{{ hotel.habitacion|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="observaciones">Observaciones</label>
+        <textarea id="observaciones" name="observaciones">{{ hotel.observaciones|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'hotel_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

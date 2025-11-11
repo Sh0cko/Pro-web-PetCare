@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Cita{% endblock %}
+{% block content %}
+<h2>🗑️ Eliminar Cita</h2>
+
+<div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:1.25rem; margin:1.5rem 0;">
+    <p style="margin:0 0 .75rem; font-weight:600;">¿Está seguro que desea eliminar esta cita?</p>
+    <ul style="margin:0; padding-left:1.25rem;">
+        <li><strong>Paciente:</strong> {{ cita.paciente.nombre }}</li>
+        <li><strong>Fecha:</strong> {{ cita.fecha|date:'d/m/Y' }}</li>
+        <li><strong>Hora:</strong> {{ cita.hora|time:'H:i' }}</li>
+        <li><strong>Servicio:</strong> {{ cita.servicio.nombre|default:'Sin servicio' }}</li>
+        <li><strong>Estado:</strong> {{ cita.get_estado_display }}</li>
+        {% if cita.motivo %}<li><strong>Motivo:</strong> {{ cita.motivo }}</li>{% endif %}
+    </ul>
+</div>
+
+<form method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">🗑️ Sí, eliminar cita</button>
+    <a href="{% url 'cita_calendario' %}" class="btn btn-secondary">← Cancelar</a>
+</form>
+{% endblock %}

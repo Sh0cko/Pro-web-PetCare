@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Listado de Citas{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+    <h2>📋 Listado de Citas</h2>
+    <div style="display:flex; gap:.5rem;">
+        <a href="{% url 'cita_calendario' %}" class="btn btn-primary">📅 Calendario</a>
+        <a href="{% url 'cita_create' %}" class="btn btn-success">➕ Nueva Cita</a>
+    </div>
+</div>
+
+<form method="get" class="list-search" style="margin:1rem 0; display:flex; gap:.75rem; flex-wrap:wrap;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por paciente, motivo o empleado" style="flex:1; min-width:220px;">
+    <select name="estado" style="padding:.55rem .7rem; border:1px solid #e0e7eb; border-radius:8px;">
+        <option value="">Todos los estados</option>
+        {% for cod, nombre in estados %}
+        <option value="{{ cod }}" {% if estado == cod %}selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q or estado %}<a href="{% url 'cita_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Paciente</th>
+            <th>Servicio</th>
+            <th>Empleado</th>
+            <th>Estado</th>
+            <th>Motivo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for cita in citas %}
+        <tr class="{% if cita.estado == 'CANCELADA' %}danger{% elif cita.estado == 'COMPLETADA' %}success{% elif cita.estado == 'CONFIRMADA' %}{% endif %}">
+            <td>{{ cita.id }}</td>
+            <td>{{ cita.fecha|date:'d/m/Y' }}</td>
+            <td>{{ cita.hora|time:'H:i' }}</td>
+            <td>{{ cita.paciente.nombre }}</td>
+            <td>{{ cita.servicio.nombre|default:'-' }}</td>
+            <td>{{ cita.empleado.nombre|default:'-' }}</td>
+            <td><span class="badge badge-{{ cita.estado|lower }}">{{ cita.get_estado_display }}</span></td>
+            <td>{{ cita.motivo|truncatechars:40 }}</td>
+            <td class="actions">
+                <a href="{% url 'cita_update' cita.pk %}" class="btn btn-warning">Editar</a>
+                <a href="{% url 'cita_delete' cita.pk %}" class="btn btn-danger">Eliminar</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="9">No hay citas registradas.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

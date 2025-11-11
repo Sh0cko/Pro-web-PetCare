@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if servicio %}Editar{% else %}Crear{% endif %} Servicio - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if servicio %}Editar Servicio{% else %}Crear Nuevo Servicio{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_servicio">ID Servicio *</label>
+        <input type="text" id="id_servicio" name="id_servicio" 
+               value="{{ servicio.id_servicio|default:'' }}" 
+               {% if servicio %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ servicio.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion">{{ servicio.descripcion|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="costo">Costo</label>
+        <input type="number" step="0.01" id="costo" name="costo" 
+               value="{{ servicio.costo|default:'' }}">
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'servicio_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

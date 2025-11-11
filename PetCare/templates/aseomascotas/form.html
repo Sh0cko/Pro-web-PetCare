@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if aseo %}Editar{% else %}Crear{% endif %} Aseo - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if aseo %}Editar Aseo{% else %}Crear Nuevo Aseo{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_aseo">ID Aseo *</label>
+        <input type="text" id="id_aseo" name="id_aseo" 
+               value="{{ aseo.id_aseo|default:'' }}" 
+               {% if aseo %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_mascota">Mascota</label>
+        <select id="id_mascota" name="id_mascota">
+            <option value="">Seleccione una mascota</option>
+            {% for paciente in pacientes %}
+            <option value="{{ paciente.id }}" 
+                    {% if aseo.id_mascota_id == paciente.id %}selected{% endif %}>
+                {{ paciente.nombre }} ({{ paciente.especie }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_propietario">Propietario</label>
+        <select id="id_propietario" name="id_propietario">
+            <option value="">Seleccione un propietario</option>
+            {% for propietario in propietarios %}
+            <option value="{{ propietario.id_propietario }}" 
+                    {% if aseo.id_propietario_id == propietario.id_propietario %}selected{% endif %}>
+                {{ propietario.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="tipo_banio">Tipo de Baño</label>
+        <input type="text" id="tipo_banio" name="tipo_banio" 
+               value="{{ aseo.tipo_banio|default:'' }}" 
+               placeholder="Ej: Completo, Básico, etc.">
+    </div>
+    
+    <div class="form-group">
+        <label for="es_agresivo">
+            <input type="checkbox" id="es_agresivo" name="es_agresivo" 
+                   {% if aseo.es_agresivo %}checked{% endif %}>
+            ¿Es agresivo?
+        </label>
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha_banio">Fecha del Baño</label>
+        <input type="date" id="fecha_banio" name="fecha_banio" 
+               value="{{ aseo.fecha_banio|date:'Y-m-d'|default:'' }}">
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'aseomascotas_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

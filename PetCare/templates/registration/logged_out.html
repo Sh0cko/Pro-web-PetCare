@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Sesión cerrada | PetCare{% endblock %}
+
+{% block content %}
+<h2>Has cerrado sesión</h2>
+<p>Gracias por usar PetCare.</p>
+<p>
+  <a class="btn btn-primary" href="{% url 'login' %}">Volver a iniciar sesión</a>
+  <a class="btn btn-secondary" href="{% url 'index' %}">Ir al inicio</a>
+</p>
+{% endblock %}

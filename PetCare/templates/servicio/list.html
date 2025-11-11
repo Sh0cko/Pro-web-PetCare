@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Servicios - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Servicios</h2>
+<a href="{% url 'servicio_create' %}" class="btn btn-success">➕ Nuevo Servicio</a>
+
+<form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:480px;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, nombre o descripción" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q %}<a href="{% url 'servicio_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Costo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for servicio in servicios %}
+        <tr>
+            <td>{{ servicio.id_servicio }}</td>
+            <td>{{ servicio.nombre }}</td>
+            <td>{{ servicio.descripcion|default:"N/A" }}</td>
+            <td>${{ servicio.costo|default:"0.00" }}</td>
+            <td>
+                <a href="{% url 'servicio_update' servicio.id_servicio %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'servicio_delete' servicio.id_servicio %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No hay servicios registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

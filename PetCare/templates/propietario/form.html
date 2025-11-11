@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if propietario %}Editar{% else %}Crear{% endif %} Propietario - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if propietario %}Editar Propietario{% else %}Crear Nuevo Propietario{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_propietario">ID Propietario *</label>
+        <input type="text" id="id_propietario" name="id_propietario" 
+               value="{{ propietario.id_propietario|default:'' }}" 
+               {% if propietario %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ propietario.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input type="text" id="telefono" name="telefono" 
+               value="{{ propietario.telefono|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" 
+               value="{{ propietario.email|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <textarea id="direccion" name="direccion">{{ propietario.direccion|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'propietario_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

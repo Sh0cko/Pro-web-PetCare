@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if inventario %}Editar{% else %}Crear{% endif %} Inventario - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if inventario %}Editar Item{% else %}Crear Nuevo Item de Inventario{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_producto">ID Producto *</label>
+        <input type="text" id="id_producto" name="id_producto" 
+               value="{{ inventario.id_producto|default:'' }}" 
+               {% if inventario %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ inventario.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion">{{ inventario.descripcion|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad" name="cantidad" 
+               value="{{ inventario.cantidad|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="precio">Precio</label>
+        <input type="number" step="0.01" id="precio" name="precio" 
+               value="{{ inventario.precio|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha_actualizacion">Fecha de Actualización</label>
+        <input type="datetime-local" id="fecha_actualizacion" name="fecha_actualizacion" 
+               value="{{ inventario.fecha_actualizacion|date:'Y-m-d\TH:i'|default:'' }}">
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'inventario_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

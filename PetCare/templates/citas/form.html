@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}{% if cita %}Editar Cita{% else %}Nueva Cita{% endif %}{% endblock %}
+{% block content %}
+<h2>{% if cita %}✏️ Editar Cita #{{ cita.id }}{% else %}➕ Nueva Cita{% endif %}</h2>
+
+<form method="post" style="max-width:900px;">
+    {% csrf_token %}
+    
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="paciente">Paciente *</label>
+            <select name="paciente" id="paciente" required>
+                <option value="">Seleccione...</option>
+                {% for p in pacientes %}
+                <option value="{{ p.id }}" {% if cita and cita.paciente.id == p.id %}selected{% endif %}>
+                    {{ p.nombre }} ({{ p.especie|default:'-' }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="servicio">Servicio</label>
+            <select name="servicio" id="servicio">
+                <option value="">Sin servicio específico</option>
+                {% for s in servicios %}
+                <option value="{{ s.id_servicio }}" {% if cita and cita.servicio and cita.servicio.id_servicio == s.id_servicio %}selected{% endif %}>
+                    {{ s.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="empleado">Empleado / Veterinario</label>
+            <select name="empleado" id="empleado">
+                <option value="">Sin asignar</option>
+                {% for e in empleados %}
+                <option value="{{ e.id_empleado }}" {% if cita and cita.empleado and cita.empleado.id_empleado == e.id_empleado %}selected{% endif %}>
+                    {{ e.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha">Fecha *</label>
+            <input type="date" name="fecha" id="fecha" value="{{ cita.fecha|date:'Y-m-d' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="hora">Hora *</label>
+            <input type="time" name="hora" id="hora" value="{{ cita.hora|time:'H:i' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="duracion_minutos">Duración (minutos)</label>
+            <input type="number" name="duracion_minutos" id="duracion_minutos" 
+                   value="{{ cita.duracion_minutos|default:30 }}" min="15" max="480" step="15">
+        </div>
+
+        <div class="form-group">
+            <label for="estado">Estado</label>
+            <select name="estado" id="estado">
+                {% for cod, nombre in estados %}
+                <option value="{{ cod }}" {% if cita and cita.estado == cod %}selected{% endif %}>{{ nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-top:.75rem;">
+        <label for="motivo">Motivo de la cita</label>
+        <textarea name="motivo" id="motivo" rows="3">{{ cita.motivo|default:'' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="notas">Notas adicionales</label>
+        <textarea name="notas" id="notas" rows="3">{{ cita.notas|default:'' }}</textarea>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn {% if cita %}btn-warning{% else %}btn-success{% endif %}">
+            {% if cita %}💾 Actualizar{% else %}➕ Crear Cita{% endif %}
+        </button>
+        <a href="{% url 'cita_calendario' %}" class="btn btn-secondary">← Volver</a>
+    </div>
+</form>
+{% endblock %}

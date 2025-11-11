@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if vacunacion %}Editar{% else %}Crear{% endif %} Vacunación - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if vacunacion %}Editar Vacunación{% else %}Crear Nueva Vacunación{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_vacunacion">ID Vacunación *</label>
+        <input type="text" id="id_vacunacion" name="id_vacunacion" 
+               value="{{ vacunacion.id_vacunacion|default:'' }}" 
+               {% if vacunacion %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_mascota">Mascota</label>
+        <select id="id_mascota" name="id_mascota">
+            <option value="">Seleccione una mascota</option>
+            {% for paciente in pacientes %}
+            <option value="{{ paciente.id }}" 
+                    {% if vacunacion.id_mascota_id == paciente.id %}selected{% endif %}>
+                {{ paciente.nombre }} ({{ paciente.especie }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_vacuna">Vacuna</label>
+        <select id="id_vacuna" name="id_vacuna">
+            <option value="">Seleccione una vacuna</option>
+            {% for vacuna in vacunas %}
+            <option value="{{ vacuna.id_vacuna }}" 
+                    {% if vacunacion.id_vacuna_id == vacuna.id_vacuna %}selected{% endif %}>
+                {{ vacuna.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" name="fecha" 
+               value="{{ vacunacion.fecha|date:'Y-m-d'|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="veterinario">Veterinario</label>
+        <input type="text" id="veterinario" name="veterinario" 
+               value="{{ vacunacion.veterinario|default:'' }}">
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'vacunacion_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

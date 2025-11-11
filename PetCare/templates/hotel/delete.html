@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Reserva Hotel - PetCare{% endblock %}
+
+{% block content %}
+<h2>Eliminar Reserva de Hotel</h2>
+
+<p>¿Está seguro que desea eliminar esta reserva (ID: <strong>{{ hotel.id_hotel }}</strong>)?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">🗑️ Sí, Eliminar</button>
+    <a href="{% url 'hotel_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+</form>
+{% endblock %}
