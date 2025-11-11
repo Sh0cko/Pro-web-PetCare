@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if producto %}Editar{% else %}Crear{% endif %} Producto - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if producto %}Editar Producto{% else %}Crear Nuevo Producto{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_producto">ID Producto *</label>
+        <input type="text" id="id_producto" name="id_producto" 
+               value="{{ producto.id_producto|default:'' }}" 
+               {% if producto %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ producto.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="precio">Precio</label>
+        <input type="number" step="0.01" id="precio" name="precio" 
+               value="{{ producto.precio|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad" name="cantidad" 
+               value="{{ producto.cantidad|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion">{{ producto.descripcion|default:'' }}</textarea>
+    </div>
+        <hr style="margin:1.5rem 0; opacity:.4;">
+        <h3 style="margin-bottom:.75rem; font-size:1rem; color:#055;">Control de inventario</h3>
+        <div class="form-group">
+            <label for="low_stock_threshold">Umbral de bajo stock</label>
+            <input type="number" id="low_stock_threshold" name="low_stock_threshold" min="0" placeholder="Ej: 5" value="{{ producto.meta.low_stock_threshold|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="expiration_date">Fecha de caducidad</label>
+            <input type="date" id="expiration_date" name="expiration_date" value="{{ producto.meta.expiration_date|date:'Y-m-d'|default:'' }}">
+        </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'producto_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

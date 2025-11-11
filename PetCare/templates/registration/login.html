@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | PetCare</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <div class="login-logo">🐾</div>
+    <h2>Iniciar Sesión</h2>
+
+    {% if form.errors %}
+      <div class="message error">Usuario o contraseña inválidos. Inténtalo nuevamente.</div>
+    {% endif %}
+
+    {% if next and user.is_authenticated %}
+      <div class="message error">Tu cuenta no tiene acceso a esta página.</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_username">Usuario</label>
+        <input type="text" name="username" autofocus required id="id_username" placeholder="Ingresa tu usuario">
+      </div>
+      <div class="form-group">
+        <label for="id_password">Contraseña</label>
+        <input type="password" name="password" required id="id_password" placeholder="Ingresa tu contraseña">
+      </div>
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+      <div class="form-actions">
+        <button type="submit" class="btn login-btn">Ingresar</button>
+      </div>
+    </form>
+
+    <p class="login-extra">
+      ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Recupérala aquí</a>
+    </p>
+  </div>
+  <script>
+    // Permite enviar con Enter dentro de los inputs
+    document.querySelector('.login-card form')?.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.currentTarget.submit(); }
+    });
+  </script>
+</body>
+</html>

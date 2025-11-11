@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PetCare - Sistema de Gestión Veterinaria{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Overlay oscuro cuando el sidebar está abierto -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Barra de navegación superior -->
+    <div class="navbar">
+        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+            ☰
+        </button>
+        <h1>🐾 PetCare - Sistema de Gestión Veterinaria</h1>
+        <div class="nav-actions">
+                {% if user.is_authenticated %}
+                <span style="color:#ecf0f1; margin-right: .5rem;">Hola, <strong>{{ user.username }}</strong></span>
+                <a href="{% url 'password_change' %}">Cambiar contraseña</a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                     {% csrf_token %}
+                     <button type="submit" style="background:#dc3545;">Salir</button>
+                </form>
+                {% else %}
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+            <a href="{% url 'carrito_ver' %}">🛒 Carrito
+                {% if request.session.carrito %}
+                <span style="background:#e74c3c; border-radius:999px; padding:.1rem .45rem; font-size:.75rem;">{{ request.session.carrito|length }}</span>
+                {% endif %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Sidebar lateral desplegable -->
+    <div class="sidebar" id="sidebar">
+        <h3>📋 Módulos del Sistema</h3>
+
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'index' %}">
+                    <span class="icon">🏠</span>
+                    Inicio
+                </a>
+            </li>
+        </ul>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">🩺</span> Gestión Clínica <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'propietario_list' %}"><span class="icon">👤</span> Propietarios</a></li>
+                <li><a href="{% url 'pacientes_list' %}"><span class="icon">🐕</span> Pacientes</a></li>
+                <li><a href="{% url 'cita_calendario' %}"><span class="icon">📅</span> Calendario de Citas</a></li>
+                <li><a href="{% url 'datosconsulta_list' %}"><span class="icon">🩺</span> Consultas</a></li>
+                <li><a href="{% url 'historialclinico_list' %}"><span class="icon">📋</span> Historiales Clínicos</a></li>
+                <li><a href="{% url 'vacuna_list' %}"><span class="icon">💉</span> Vacunas</a></li>
+                <li><a href="{% url 'vacunacion_list' %}"><span class="icon">📝</span> Vacunaciones</a></li>
+                <li><a href="{% url 'aseomascotas_list' %}"><span class="icon">🛁</span> Aseo de Mascotas</a></li>
+                <li><a href="{% url 'hotel_list' %}"><span class="icon">🏨</span> Hotel</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">🗂️</span> Catálogo e Inventario <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'servicio_list' %}"><span class="icon">🔧</span> Servicios</a></li>
+                <li><a href="{% url 'producto_list' %}"><span class="icon">📦</span> Productos</a></li>
+                <li><a href="{% url 'inventario_list' %}"><span class="icon">📊</span> Inventario</a></li>
+                <li><a href="{% url 'movimientos_inventario' %}"><span class="icon">🔄</span> Movimientos {% if nav_badges.movimientos_recent_count > 0 %}<span class="badge badge-info">{{ nav_badges.movimientos_recent_count }}</span>{% endif %}</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">�</span> Ventas <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'tienda_productos' %}"><span class="icon">🛍️</span> Tienda</a></li>
+                <li><a href="{% url 'carrito_ver' %}"><span class="icon">🧺</span> Carrito</a></li>
+                <li><a href="{% url 'factura_list' %}"><span class="icon">🧾</span> Facturas</a></li>
+                <li><a href="{% url 'pago_list' %}"><span class="icon">💳</span> Pagos</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group" >
+            <summary><span class="icon">📈</span> Reportes <span class="chev">▾</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'productos_bajo_stock' %}"><span class="icon">⚠️</span> Stock Bajo {% if nav_badges.low_stock_count > 0 %}<span class="badge badge-low">{{ nav_badges.low_stock_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'productos_caducidad' %}"><span class="icon">⏳</span> Caducidad {% if nav_badges.exp_count > 0 %}<span class="badge badge-soon">{{ nav_badges.exp_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'reporte_mas_vendidos' %}"><span class="icon">🏆</span> Más Vendidos</a></li>
+            </ul>
+        </details>
+
+        <details class="sidebar-group">
+            <summary><span class="icon">⚙️</span> Administración <span class="chev">▸</span></summary>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'empleado_list' %}"><span class="icon">�‍⚕️</span> Empleados</a></li>
+            </ul>
+        </details>
+    </div>
+
+    <div class="main">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="card">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script>
+        // Función para abrir/cerrar el sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const body = document.body;
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            body.classList.toggle('sidebar-open');
+        }
+
+        // Cerrar el sidebar cuando se hace clic en un enlace (en móviles)
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Cerrar sidebar con tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('open')) {
+                    toggleSidebar();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

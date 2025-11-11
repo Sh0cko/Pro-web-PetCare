@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if consulta %}Editar{% else %}Crear{% endif %} Consulta - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if consulta %}Editar Consulta{% else %}Crear Nueva Consulta{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_consulta">ID Consulta *</label>
+        <input type="text" id="id_consulta" name="id_consulta" 
+               value="{{ consulta.id_consulta|default:'' }}" 
+               {% if consulta %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_mascota">Mascota *</label>
+        <select id="id_mascota" name="id_mascota" required>
+            <option value="">Seleccione una mascota</option>
+            {% for paciente in pacientes %}
+            <option value="{{ paciente.id }}" 
+                    {% if consulta.id_mascota_id == paciente.id %}selected{% endif %}>
+                {{ paciente.nombre }} ({{ paciente.especie }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" name="fecha" 
+               value="{{ consulta.fecha|date:'Y-m-d'|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="motivo">Motivo</label>
+        <textarea id="motivo" name="motivo">{{ consulta.motivo|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="diagnostico">Diagnóstico</label>
+        <textarea id="diagnostico" name="diagnostico">{{ consulta.diagnostico|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="detalles_paciente">Detalles del Paciente</label>
+        <textarea id="detalles_paciente" name="detalles_paciente">{{ consulta.detalles_paciente|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'datosconsulta_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

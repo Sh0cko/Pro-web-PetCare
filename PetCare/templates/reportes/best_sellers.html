@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Productos Más Vendidos{% endblock %}
+{% block content %}
+<h2>Productos Más Vendidos</h2>
+<div class="table-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>ID</th>
+      <th>Producto</th>
+      <th>Total vendido</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for p in productos %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ p.id }}</td>
+      <td>{{ p.nombre }}</td>
+      <td>{{ p.total }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No hay ventas registradas.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

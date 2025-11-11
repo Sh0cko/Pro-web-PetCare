@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Factura - PetCare{% endblock %}
+
+{% block content %}
+<h2>Eliminar Factura</h2>
+
+<p>¿Está seguro que desea eliminar esta factura (ID: <strong>{{ factura.id_factura }}</strong>)?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">🗑️ Sí, Eliminar</button>
+    <a href="{% url 'factura_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+</form>
+{% endblock %}

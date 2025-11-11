@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Historiales Clínicos - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Historiales Clínicos</h2>
+<a href="{% url 'historialclinico_create' %}" class="btn btn-success">➕ Nuevo Historial</a>
+
+<form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:520px;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, mascota u observaciones" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q %}<a href="{% url 'historialclinico_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mascota</th>
+            <th>Peso (kg)</th>
+            <th>Temperatura (°C)</th>
+            <th>Antecedentes</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for historial in historiales %}
+        <tr>
+            <td>{{ historial.id_historial }}</td>
+            <td>{{ historial.id_mascota.nombre|default:"N/A" }}</td>
+            <td>{{ historial.peso|default:"N/A" }}</td>
+            <td>{{ historial.temperatura|default:"N/A" }}</td>
+            <td>{{ historial.antecedentes|truncatewords:10|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'historialclinico_update' historial.id_historial %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'historialclinico_delete' historial.id_historial %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay historiales clínicos registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

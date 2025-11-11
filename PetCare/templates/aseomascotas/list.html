@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Aseos - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Aseos</h2>
+<a href="{% url 'aseomascotas_create' %}" class="btn btn-success">➕ Nuevo Aseo</a>
+
+<form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:560px;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, mascota, propietario o tipo de baño" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q %}<a href="{% url 'aseomascotas_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mascota</th>
+            <th>Propietario</th>
+            <th>Tipo de Baño</th>
+            <th>Es Agresivo</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aseo in aseos %}
+        <tr>
+            <td>{{ aseo.id_aseo }}</td>
+            <td>{{ aseo.id_mascota.nombre|default:"N/A" }}</td>
+            <td>{{ aseo.id_propietario.nombre|default:"N/A" }}</td>
+            <td>{{ aseo.tipo_banio|default:"N/A" }}</td>
+            <td>{% if aseo.es_agresivo %}Sí{% else %}No{% endif %}</td>
+            <td>{{ aseo.fecha_banio|date:"d/m/Y"|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'aseomascotas_update' aseo.id_aseo %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'aseomascotas_delete' aseo.id_aseo %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No hay aseos registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Compra Exitosa - PetCare{% endblock %}
+
+{% block content %}
+<div style="text-align: center; max-width: 600px; margin: 3rem auto;">
+    <div style="background-color: white; border-radius: 8px; padding: 3rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="font-size: 5rem; color: #27ae60; margin-bottom: 1rem;">
+            ✅
+        </div>
+        
+        <h2 style="color: #27ae60; margin-bottom: 1rem;">
+            ¡Compra Realizada Exitosamente!
+        </h2>
+        
+        <p style="font-size: 1.1rem; color: #7f8c8d; margin-bottom: 2rem;">
+            Gracias por su compra. Su pedido ha sido procesado correctamente.
+        </p>
+        
+        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left;">
+                <div>
+                    <strong style="color: #7f8c8d;">Número de Factura:</strong>
+                    <div style="font-size: 1.2rem; color: #2c3e50; font-weight: bold;">
+                        {{ factura.id_factura }}
+                    </div>
+                </div>
+                <div>
+                    <strong style="color: #7f8c8d;">Fecha:</strong>
+                    <div style="font-size: 1.2rem; color: #2c3e50; font-weight: bold;">
+                        {{ factura.fecha|date:"d/m/Y" }}
+                    </div>
+                </div>
+                <div>
+                    <strong style="color: #7f8c8d;">Cliente:</strong>
+                    <div style="font-size: 1.2rem; color: #2c3e50; font-weight: bold;">
+                        {{ factura.id_propietario.nombre }}
+                    </div>
+                </div>
+                <div>
+                    <strong style="color: #7f8c8d;">Total Pagado:</strong>
+                    <div style="font-size: 1.5rem; color: #27ae60; font-weight: bold;">
+                        ${{ factura.total }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; padding: 1rem; margin-bottom: 2rem;">
+            <strong>ℹ️ Información:</strong>
+            <p style="margin-top: 0.5rem; margin-bottom: 0;">
+                El inventario ha sido actualizado automáticamente. Puede consultar esta factura en el módulo de <a href="{% url 'factura_list' %}">Facturas</a>.
+            </p>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'tienda_productos' %}" class="btn btn-primary">
+                🛒 Seguir Comprando
+            </a>
+            <a href="{% url 'factura_list' %}" class="btn btn-secondary">
+                📄 Ver Facturas
+            </a>
+            <a href="{% url 'index' %}" class="btn btn-secondary">
+                🏠 Ir al Inicio
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

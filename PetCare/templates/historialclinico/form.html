@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if historial %}Editar{% else %}Crear{% endif %} Historial Clínico - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if historial %}Editar Historial Clínico{% else %}Crear Nuevo Historial Clínico{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_historial">ID Historial *</label>
+        <input type="text" id="id_historial" name="id_historial" 
+               value="{{ historial.id_historial|default:'' }}" 
+               {% if historial %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_mascota">Mascota</label>
+        <select id="id_mascota" name="id_mascota">
+            <option value="">Seleccione una mascota</option>
+            {% for paciente in pacientes %}
+            <option value="{{ paciente.id }}" 
+                    {% if historial.id_mascota_id == paciente.id %}selected{% endif %}>
+                {{ paciente.nombre }} ({{ paciente.especie }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="peso">Peso (kg)</label>
+        <input type="number" step="0.01" id="peso" name="peso" 
+               value="{{ historial.peso|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="temperatura">Temperatura (°C)</label>
+        <input type="number" step="0.1" id="temperatura" name="temperatura" 
+               value="{{ historial.temperatura|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="antecedentes">Antecedentes</label>
+        <textarea id="antecedentes" name="antecedentes">{{ historial.antecedentes|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="tratamientos">Tratamientos</label>
+        <textarea id="tratamientos" name="tratamientos">{{ historial.tratamientos|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="observaciones">Observaciones</label>
+        <textarea id="observaciones" name="observaciones">{{ historial.observaciones|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'historialclinico_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

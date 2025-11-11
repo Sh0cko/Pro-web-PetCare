@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Empleados - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Empleados</h2>
+<a href="{% url 'empleado_create' %}" class="btn btn-success">➕ Nuevo Empleado</a>
+
+<form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:420px;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, nombre o cargo" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q %}<a href="{% url 'empleado_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Cargo</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for empleado in empleados %}
+        <tr>
+            <td>{{ empleado.id_empleado }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.cargo|default:"N/A" }}</td>
+            <td>{{ empleado.telefono|default:"N/A" }}</td>
+            <td>{{ empleado.email|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'empleado_update' empleado.id_empleado %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'empleado_delete' empleado.id_empleado %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay empleados registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if empleado %}Editar{% else %}Crear{% endif %} Empleado - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if empleado %}Editar Empleado{% else %}Crear Nuevo Empleado{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_empleado">ID Empleado *</label>
+        <input type="text" id="id_empleado" name="id_empleado" 
+               value="{{ empleado.id_empleado|default:'' }}" 
+               {% if empleado %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ empleado.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="cargo">Cargo</label>
+        <input type="text" id="cargo" name="cargo" 
+               value="{{ empleado.cargo|default:'' }}" 
+               placeholder="Ej: Veterinario, Asistente, etc.">
+    </div>
+    
+    <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input type="text" id="telefono" name="telefono" 
+               value="{{ empleado.telefono|default:'' }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" 
+               value="{{ empleado.email|default:'' }}">
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'empleado_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

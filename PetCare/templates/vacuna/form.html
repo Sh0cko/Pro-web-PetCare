@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if vacuna %}Editar{% else %}Crear{% endif %} Vacuna - PetCare{% endblock %}
+
+{% block content %}
+<h2>{% if vacuna %}Editar Vacuna{% else %}Crear Nueva Vacuna{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_vacuna">ID Vacuna *</label>
+        <input type="text" id="id_vacuna" name="id_vacuna" 
+               value="{{ vacuna.id_vacuna|default:'' }}" 
+               {% if vacuna %}readonly{% else %}required{% endif %}>
+    </div>
+    
+    <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" 
+               value="{{ vacuna.nombre|default:'' }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion">{{ vacuna.descripcion|default:'' }}</textarea>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">💾 Guardar</button>
+        <a href="{% url 'vacuna_list' %}" class="btn btn-secondary">❌ Cancelar</a>
+    </div>
+</form>
+{% endblock %}

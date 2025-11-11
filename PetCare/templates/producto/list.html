@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Productos - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Productos</h2>
+<a href="{% url 'producto_create' %}" class="btn btn-success">➕ Nuevo Producto</a>
+
+<form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:480px;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, nombre o descripción" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q %}<a href="{% url 'producto_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.id_producto }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>${{ producto.precio|default:"0.00" }}</td>
+            <td>{{ producto.cantidad|default:"0" }}</td>
+            <td>{{ producto.descripcion|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'producto_update' producto.id_producto %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'producto_delete' producto.id_producto %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay productos registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

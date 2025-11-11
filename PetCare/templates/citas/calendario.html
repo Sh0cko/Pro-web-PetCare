@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load calendar_tags %}
+{% block title %}Calendario de Citas{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h2>📅 Calendario de Citas - {{ month_name }} {{ year }}</h2>
+    <div style="display:flex; gap:.75rem;">
+        <a href="?year={{ mes_anterior.year }}&month={{ mes_anterior.month }}" class="btn btn-secondary">◀ Anterior</a>
+        <a href="?year={{ hoy.year }}&month={{ hoy.month }}" class="btn btn-primary">Hoy</a>
+        <a href="?year={{ mes_siguiente.year }}&month={{ mes_siguiente.month }}" class="btn btn-secondary">Siguiente ▶</a>
+        <a href="{% url 'cita_create' %}" class="btn btn-success">➕ Nueva Cita</a>
+        <a href="{% url 'cita_list' %}" class="btn btn-secondary">📋 Lista</a>
+    </div>
+</div>
+
+<div class="calendario-container">
+    <table class="calendario-mes">
+        <thead>
+            <tr>
+                <th>Lun</th>
+                <th>Mar</th>
+                <th>Mié</th>
+                <th>Jue</th>
+                <th>Vie</th>
+                <th>Sáb</th>
+                <th>Dom</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for semana in calendar_weeks %}
+            <tr>
+            {% for dia in semana %}
+                <td class="calendario-dia {% if dia == hoy.day and month == hoy.month and year == hoy.year %}hoy{% endif %} {% if dia == 0 %}vacio{% endif %}">
+                    {% if dia != 0 %}
+                        <div class="dia-numero">{{ dia }}</div>
+                        {% if citas_por_dia|stringformat:"s" %}
+                            {% with dia_str=dia|stringformat:"s" %}
+                                {% if dia_str in citas_por_dia %}
+                                    <div class="citas-dia">
+                                    {% for cita in citas_por_dia|get_item:dia_str %}
+                                        <div class="cita-mini cita-{{ cita.estado|lower }}" title="{{ cita.paciente.nombre }} - {{ cita.hora }}">
+                                            <span class="cita-hora">{{ cita.hora|time:"H:i" }}</span>
+                                            <span class="cita-paciente">{{ cita.paciente.nombre|truncatechars:15 }}</span>
+                                            <a href="{% url 'cita_update' cita.pk %}" class="cita-editar">✏️</a>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endif %}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top:1.5rem; padding:1rem; background:#f9f9f9; border-radius:8px;">
+    <h4 style="margin:0 0 .75rem;">Leyenda de estados:</h4>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; font-size:.85rem;">
+        <span><span class="badge" style="background:#6c757d;">PENDIENTE</span> Pendiente</span>
+        <span><span class="badge" style="background:#0d6efd;">CONFIRMADA</span> Confirmada</span>
+        <span><span class="badge" style="background:#14a44d;">COMPLETADA</span> Completada</span>
+        <span><span class="badge" style="background:#dc3545;">CANCELADA</span> Cancelada</span>
+        <span><span class="badge" style="background:#f5b300; color:#000;">NO_ASISTIO</span> No asistió</span>
+    </div>
+</div>
+
+{% endblock %}

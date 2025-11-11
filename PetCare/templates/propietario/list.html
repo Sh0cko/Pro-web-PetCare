@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Propietarios - PetCare{% endblock %}
+
+{% block content %}
+<h2>Listado de Propietarios</h2>
+<a href="{% url 'propietario_create' %}" class="btn btn-success">➕ Nuevo Propietario</a>
+
+<form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:420px;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, nombre o email" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
+    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    {% if q %}<a href="{% url 'propietario_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for propietario in propietarios %}
+        <tr>
+            <td>{{ propietario.id_propietario }}</td>
+            <td>{{ propietario.nombre }}</td>
+            <td>{{ propietario.telefono|default:"N/A" }}</td>
+            <td>{{ propietario.email|default:"N/A" }}</td>
+            <td>{{ propietario.direccion|default:"N/A" }}</td>
+            <td>
+                <a href="{% url 'propietario_update' propietario.id_propietario %}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{% url 'propietario_delete' propietario.id_propietario %}" class="btn btn-danger">🗑️ Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay propietarios registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
