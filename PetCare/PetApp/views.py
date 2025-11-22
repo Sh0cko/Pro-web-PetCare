@@ -1,6 +1,8 @@
+from .utils import admin_required, staff_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from .models import (
     Aseomascotas, Datosconsulta, Empleado, Factura, FacturaServicio,
@@ -1364,3 +1366,153 @@ def cita_delete(request, pk):
             messages.error(request, f'Error al eliminar cita: {str(e)}')
         return redirect('cita_calendario')
     return render(request, 'citas/delete.html', {'cita': cita})
+
+# VISTAS PÚBLICAS - accesibles sin estar logueado
+def registrar_usuario(request):
+    # Si ya está logueado, redirigir al menú principal
+    if request.user.is_authenticated:
+        return redirect('menu')
+    
+    if request.method == 'POST':
+        # Aquí irá la lógica para crear usuario
+        pass
+    
+    return render(request, 'registration/registrar_usuario.html')
+
+def registrar_admin(request):
+    # Si ya está logueado, redirigir al menú principal
+    if request.user.is_authenticated:
+        return redirect('menu')
+    
+    if request.method == 'POST':
+        # Aquí irá la lógica para crear admin
+        pass
+    
+    return render(request, 'registration/registrar_admin.html')
+
+def registrar_usuario(request):
+    if request.user.is_authenticated:
+        return redirect('menu')
+    
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            password_confirm = request.POST.get('password_confirm')
+            email = request.POST.get('email', '')
+            first_name = request.POST.get('first_name', '')
+            last_name = request.POST.get('last_name', '')
+            
+            # Validaciones
+            if password != password_confirm:
+                messages.error(request, 'Las contraseñas no coinciden')
+                return render(request, 'registration/registrar_usuario.html', {
+                    'form_data': request.POST
+                })
+            
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Este nombre de usuario ya existe')
+                return render(request, 'registration/registrar_usuario.html', {
+                    'form_data': request.POST
+                })
+            
+            # Crear usuario normal
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                is_staff=False,
+                is_superuser=False
+            )
+            
+            messages.success(request, f'¡Cuenta creada exitosamente! Ahora puedes iniciar sesión como {username}')
+            return redirect('login')
+            
+        except Exception as e:
+            messages.error(request, f'Error al crear la cuenta: {str(e)}')
+            return render(request, 'registration/registrar_usuario.html', {
+                'form_data': request.POST
+            })
+    
+    return render(request, 'registration/registrar_usuario.html')
+
+def registrar_admin(request):
+    if request.user.is_authenticated:
+        return redirect('menu')
+    
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            password_confirm = request.POST.get('password_confirm')
+            email = request.POST.get('email')
+            codigo_verificacion = request.POST.get('codigo_verificacion', '')
+            
+            # Validaciones
+            if password != password_confirm:
+                messages.error(request, 'Las contraseñas no coinciden')
+                return render(request, 'registration/registrar_admin.html', {
+                    'form_data': request.POST
+                })
+            
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Este nombre de usuario ya existe')
+                return render(request, 'registration/registrar_admin.html', {
+                    'form_data': request.POST
+                })
+            
+            # Verificar código de administrador (puedes cambiar este código)
+            CODIGO_ADMIN = "ADMIN2024"  # Cámbialo por uno más seguro
+            
+            if codigo_verificacion == CODIGO_ADMIN:
+                # Crear superusuario
+                user = User.objects.create_superuser(
+                    username=username,
+                    password=password,
+                    email=email
+                )
+                messages.success(request, f'¡Cuenta de administrador creada exitosamente! Bienvenido {username}')
+            else:
+                # Crear usuario staff (puede necesitar activación)
+                user = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=email,
+                    is_staff=True,
+                    is_superuser=False
+                )
+                messages.success(request, f'¡Solicitud enviada! Un administrador activará tu cuenta pronto.')
+            
+            return redirect('login')
+            
+        except Exception as e:
+            messages.error(request, f'Error al crear la cuenta: {str(e)}')
+            return render(request, 'registration/registrar_admin.html', {
+                'form_data': request.POST
+            })
+    
+    return render(request, 'registration/registrar_admin.html')
+
+
+
+
+
+@admin_required
+def gestionar_usuarios(request):
+    # Solo administradores
+    return render(request, 'admin/gestionar_usuarios.html')
+
+@staff_required  
+def empleado_list(request):
+    # Solo staff y administradores
+    return render(request, 'empleado/list.html')
+
+# Vistas normales (accesibles para todos los usuarios autenticados)
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def pacientes_list(request):
+    # Todos los usuarios logueados pueden ver pacientes
+    return render(request, 'pacientes/list.html')

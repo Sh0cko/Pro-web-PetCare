@@ -37,3 +37,10 @@ def nav_counters(request):
         pass
 
     return { 'nav_badges': data }
+
+def user_permissions(request):
+    return {
+        'is_admin': request.user.is_authenticated and request.user.is_superuser,
+        'is_staff': request.user.is_authenticated and request.user.is_staff,
+        'is_normal_user': request.user.is_authenticated and not request.user.is_staff and not request.user.is_superuser,
+    }

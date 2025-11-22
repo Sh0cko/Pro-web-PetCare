@@ -63,7 +63,7 @@ ROOT_URLCONF = 'demo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': ["templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,9 +84,9 @@ WSGI_APPLICATION = 'demo.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Petcare_db',
-        'USER': 'petcare-administrator',          
-        'PASSWORD': 'root123', 
+        'NAME': 'PetCareDB',
+        'USER': 'Admin',          
+        'PASSWORD': 'admin123', 
         'HOST': 'localhost',
         'PORT': '5432',
     }

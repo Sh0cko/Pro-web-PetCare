@@ -14,7 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+from django.contrib import admin 
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from PetApp import views
 
@@ -134,4 +135,37 @@ urlpatterns = [
     path('citas/crear/', views.cita_create, name='cita_create'),
     path('citas/editar/<int:pk>/', views.cita_update, name='cita_update'),
     path('citas/eliminar/<int:pk>/', views.cita_delete, name='cita_delete'),
+
+     path('admin/', admin.site.urls),
+    path('', views.index, name='index'),
+    
+    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    
+    # ... el resto de tus URLs existentes ...
+    
+    path('admin/', admin.site.urls),
+    path('', views.index, name='index'),
+    
+    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    
+    # ... el resto de tus URLs existentes ...
+    path('admin/', admin.site.urls),
+    
+    # PÁGINA PRINCIPAL (debe ser accesible sin login)
+    path('', views.index, name='index'),
+    
+    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    
+    # URLs DE REGISTRO
+    path('accounts/registro/usuario/', views.registrar_usuario, name='registrar_usuario'),
+    path('accounts/registro/admin/', views.registrar_admin, name='registrar_admin'),
+    
 ]

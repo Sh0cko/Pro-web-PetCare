@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'PetApp.context_processors.nav_counters',
+                'PetApp.context_processors.user_permissions',
             ],
         },
     },
@@ -77,15 +78,15 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'PetCareDB',
         'USER': 'Admin',
         'PASSWORD': 'admin123',
-        'HOST': 'localhost',  # o la IP de tu servidor
-        'PORT': '5432',  
+        'HOST': 'localhost',
+        'PORT': '5432',
         'OPTIONS': {
             'client_encoding': 'UTF8',
-            },
+        },
     }
 }
 
@@ -143,13 +144,18 @@ LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
 
 # Rutas exentas de autenticación (regex relativas, sin prefijo '/')
+# Rutas exentas de autenticación (regex relativas, sin prefijo '/')
 LOGIN_EXEMPT_URLS = [
-    r'^login/$',
-    r'^logout/$',
-    r'^password_reset/',
-    r'^reset/',
-    r'^password_reset/done/',
-    r'^admin/',
+    r'^accounts/login/$',           # Login
+    r'^accounts/logout/$',          # Logout
+    r'^password_reset/',            # Recuperación de contraseña
+    r'^reset/',                     # Reset de contraseña
+    r'^password_reset/done/',       # Confirmación de recuperación
+    r'^admin/',                     # Panel de administración
+    
+    # NUEVAS EXENCIONES PARA REGISTRO
+    r'^accounts/registro/usuario/$', # Registro de usuario normal
+    r'^accounts/registro/admin/$',   # Registro de administrador
 ]
 
 # Email backend para desarrollo (mostrar emails por consola)

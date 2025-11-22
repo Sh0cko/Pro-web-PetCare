@@ -6,11 +6,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar sesión | PetCare</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .login-options {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e0e0e0;
+    }
+    .register-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    .btn-register {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+    .btn-register:hover {
+      background: #218838;
+    }
+    .btn-register-admin {
+      background: #ffc107;
+      color: #212529;
+    }
+    .btn-register-admin:hover {
+      background: #e0a800;
+    }
+    .login-extra {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+  </style>
 </head>
 <body class="login-page">
   <div class="login-card">
     <div class="login-logo">🐾</div>
-    <h2>Iniciar Sesión</h2>
+    <h2>Iniciar Sesión - PetCare</h2>
 
     {% if form.errors %}
       <div class="message error">Usuario o contraseña inválidos. Inténtalo nuevamente.</div>
@@ -34,18 +72,34 @@
         <input type="hidden" name="next" value="{{ next }}">
       {% endif %}
       <div class="form-actions">
-        <button type="submit" class="btn login-btn">Ingresar</button>
+        <button type="submit" class="btn login-btn">Ingresar al Sistema</button>
       </div>
     </form>
+
+    <!-- SECCIÓN DE REGISTRO -->
+    <div class="login-options">
+      <h3 style="text-align: center; margin-bottom: 1rem; color: #555;">¿No tienes cuenta?</h3>
+      <div class="register-buttons">
+        <a href="{% url 'registrar_usuario' %}" class="btn-register">
+          👤 Registrarme como Usuario Normal
+        </a>
+        <a href="{% url 'registrar_admin' %}" class="btn-register btn-register-admin">
+          👑 Solicitar Cuenta de Administrador
+        </a>
+      </div>
+    </div>
 
     <p class="login-extra">
       ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Recupérala aquí</a>
     </p>
   </div>
+
   <script>
     // Permite enviar con Enter dentro de los inputs
-    document.querySelector('.login-card form')?.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter'){ e.currentTarget.submit(); }
+    document.querySelector('.login-card form')?.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') { 
+        e.currentTarget.submit(); 
+      }
     });
   </script>
 </body>
