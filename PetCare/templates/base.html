@@ -7,6 +7,44 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
+        /* Estilos para iconos PNG */
+        .icon-img {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        
+        .navbar h1 .icon-img {
+            width: 28px;
+            height: 28px;
+            margin-right: 10px;
+        }
+        
+        .nav-actions .icon-img {
+            width: 18px;
+            height: 18px;
+            margin-right: 5px;
+        }
+        
+        .sidebar h3 .icon-img {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .sidebar-group summary .icon-img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .user-badge .icon-img {
+            width: 18px;
+            height: 18px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
         /* Indicador de tipo de usuario */
         .user-type-indicator {
             margin-top: 2rem;
@@ -48,7 +86,7 @@
         <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
             ☰
         </button>
-        <h1>🐾 PetCare - Sistema de Gestión Veterinaria</h1>
+        <h1><img src="{% static 'img/icons/Patitas-removebg.png' %}" alt="" class="icon-img"> PetCare - Sistema de Gestión Veterinaria</h1>
         <div class="nav-actions">
                 {% if user.is_authenticated %}
                 <span style="color:#ecf0f1; margin-right: .5rem;">Hola, <strong>{{ user.username }}</strong></span>

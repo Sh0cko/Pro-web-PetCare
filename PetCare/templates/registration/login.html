@@ -43,11 +43,23 @@
       margin-top: 1.5rem;
       text-align: center;
     }
+    .btn-register img, .login-logo img {
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .login-logo img {
+      width: 64px;
+      height: 64px;
+    }
+    .btn-register img {
+      width: 20px;
+      height: 20px;
+    }
   </style>
 </head>
 <body class="login-page">
   <div class="login-card">
-    <div class="login-logo">🐾</div>
+    <div class="login-logo"><img src="{% static 'img/icons/Patitas-removebg.png' %}" alt="PetCare"></div>
     <h2>Iniciar Sesión - PetCare</h2>
 
     {% if form.errors %}
@@ -81,10 +93,10 @@
       <h3 style="text-align: center; margin-bottom: 1rem; color: #555;">¿No tienes cuenta?</h3>
       <div class="register-buttons">
         <a href="{% url 'registrar_usuario' %}" class="btn-register">
-          👤 Registrarme como Usuario Normal
+          <img src="{% static 'img/icons/Register.png' %}" alt=""> Registrarme como Usuario Normal
         </a>
         <a href="{% url 'registrar_admin' %}" class="btn-register btn-register-admin">
-          👑 Solicitar Cuenta de Administrador
+          <img src="{% static 'img/icons/Solicitar.png' %}" alt=""> Solicitar Cuenta de Administrador
         </a>
       </div>
     </div>
