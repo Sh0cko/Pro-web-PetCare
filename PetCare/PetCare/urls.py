@@ -136,34 +136,10 @@ urlpatterns = [
     path('citas/editar/<int:pk>/', views.cita_update, name='cita_update'),
     path('citas/eliminar/<int:pk>/', views.cita_delete, name='cita_delete'),
 
-     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
-    
-    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('accounts/', include('django.contrib.auth.urls')),
-    
-    # ... el resto de tus URLs existentes ...
-    
-    path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
-    
-    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('accounts/', include('django.contrib.auth.urls')),
-    
-    # ... el resto de tus URLs existentes ...
-    path('admin/', admin.site.urls),
-    
-    # PÁGINA PRINCIPAL (debe ser accesible sin login)
-    path('', views.index, name='index'),
-    
-    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS
+    # AUTENTICACIÓN CON TEMPLATES PERSONALIZADOS (una sola vez)
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
-    
+    path('accounts/', include('django.contrib.auth.urls')),
     # URLs DE REGISTRO
     path('accounts/registro/usuario/', views.registrar_usuario, name='registrar_usuario'),
     path('accounts/registro/admin/', views.registrar_admin, name='registrar_admin'),

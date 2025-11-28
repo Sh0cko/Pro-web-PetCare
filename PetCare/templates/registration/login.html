@@ -5,8 +5,56 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar sesión | PetCare</title>
+  <link rel="icon" type="image/png" href="{% static 'img/icons/veterinarioFAV.png' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <style>
+    /* Animación de fondo con patitas */
+    .paw-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .paw {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      opacity: 0.01;
+      animation: float linear infinite;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.99;
+      }
+      90% {
+        opacity: 0.99;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    .login-page {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .login-card {
+      position: relative;
+      z-index: 2;
+    }
+    
     .login-options {
       margin-top: 2rem;
       padding-top: 1.5rem;
@@ -28,6 +76,9 @@
       text-align: center;
       font-weight: 500;
       transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-register:hover {
       background: #218838;
@@ -46,18 +97,24 @@
     .btn-register img, .login-logo img {
       vertical-align: middle;
       margin-right: 8px;
+      display: inline-block;
     }
     .login-logo img {
       width: 64px;
       height: 64px;
     }
     .btn-register img {
-      width: 20px;
-      height: 20px;
+      width: 28px;
+      height: 28px;
+      margin: 0;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body class="login-page">
+  <!-- Animación de patitas en el fondo -->
+  <div class="paw-background" id="pawBackground"></div>
+  
   <div class="login-card">
     <div class="login-logo"><img src="{% static 'img/icons/Patitas-removebg.png' %}" alt="PetCare"></div>
     <h2>Iniciar Sesión - PetCare</h2>
@@ -84,7 +141,7 @@
         <input type="hidden" name="next" value="{{ next }}">
       {% endif %}
       <div class="form-actions">
-        <button type="submit" class="btn login-btn">Ingresar al Sistema</button>
+        <button type="submit" class="btn login-btn">Iniciar Sesion</button>
       </div>
     </form>
 
@@ -107,6 +164,37 @@
   </div>
 
   <script>
+    // Crear patitas animadas en el fondo
+    function createPaws() {
+      const pawBackground = document.getElementById('pawBackground');
+      const numberOfPaws = 100; // Cantidad de patitas
+      
+      for (let i = 0; i < numberOfPaws; i++) {
+        const paw = document.createElement('img');
+        paw.src = "{% static 'img/icons/Patitas-removebg.png' %}";
+        paw.className = 'paw';
+        
+        // Posición horizontal aleatoria
+        paw.style.left = Math.random() * 100 + '%';
+        
+        // Duración de animación aleatoria (entre 8 y 15 segundos)
+        paw.style.animationDuration = (Math.random() * 7 + 8) + 's';
+        
+        // Delay aleatorio para que no empiecen todas al mismo tiempo
+        paw.style.animationDelay = Math.random() * 5 + 's';
+        
+        // Tamaño aleatorio
+        const size = Math.random() * 30 + 30; // Entre 30px y 60px
+        paw.style.width = size + 'px';
+        paw.style.height = size + 'px';
+        
+        pawBackground.appendChild(paw);
+      }
+    }
+    
+    // Crear las patitas cuando cargue la página
+    createPaws();
+    
     // Permite enviar con Enter dentro de los inputs
     document.querySelector('.login-card form')?.addEventListener('keydown', (e) => {
       if(e.key === 'Enter') { 

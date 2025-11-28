@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 <h2>Bienvenido al Sistema PetCare</h2>
 <p>Sistema de gestión veterinaria integral</p>
@@ -10,10 +12,12 @@
     <p style="margin-bottom: 1.5rem; opacity: 0.9;">Gestiona las ventas de productos de forma rápida y sencilla</p>
     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
         <a href="{% url 'tienda_productos' %}" class="btn" style="background-color: white; color: #667eea; font-weight: bold;">
-            🛒 Ir a la Tienda
+            <img src="{% static 'img/icons/Tienda.png' %}" alt="Tienda" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;">
+            Ir a la Tienda
         </a>
         <a href="{% url 'carrito_ver' %}" class="btn" style="background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white;">
-            🛍️ Ver Carrito
+            <img src="{% static 'img/icons/Carrito.png' %}" alt="Carrito" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;">
+            Ver Carrito
         </a>
     </div>
 </div>
@@ -21,10 +25,34 @@
 <div style="margin-top: 2rem;">
     <h3>Módulos Disponibles:</h3>
     <ul style="list-style: none; padding: 0;">
-        <li style="margin: 0.5rem 0;"><a href="{% url 'propietario_list' %}" class="btn btn-primary">👤 Propietarios</a> - Gestión de dueños de mascotas</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'pacientes_list' %}" class="btn btn-primary">🐕 Pacientes</a> - Gestión de mascotas</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'empleado_list' %}" class="btn btn-primary">👨‍⚕️ Empleados</a> - Personal de la veterinaria</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'servicio_list' %}" class="btn btn-primary">🔧 Servicios</a> - Servicios veterinarios</li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'propietario_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Propietario.png' %}" alt="Propietarios" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Propietarios
+            </a>
+            - Gestión de dueños de mascotas
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'pacientes_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/PacienteAnimal.png' %}" alt="Pacientes" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Pacientes
+            </a>
+            - Gestión de mascotas
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'empleado_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Empleado.png' %}" alt="Empleados" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Empleados
+            </a>
+            - Personal de la veterinaria
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'servicio_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Servicios.png' %}" alt="Servicios" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Servicios
+            </a>
+            - Servicios veterinarios
+        </li>
         <li style="margin: 0.5rem 0;"><a href="{% url 'producto_list' %}" class="btn btn-primary">📦 Productos</a> - Productos disponibles</li>
         <li style="margin: 0.5rem 0;"><a href="{% url 'inventario_list' %}" class="btn btn-primary">📊 Inventario</a> - Control de inventario</li>
         <li style="margin: 0.5rem 0;"><a href="{% url 'vacuna_list' %}" class="btn btn-primary">💉 Vacunas</a> - Catálogo de vacunas</li>
