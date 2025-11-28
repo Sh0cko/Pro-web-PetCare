@@ -21,9 +21,9 @@
         }
         
         .navbar h1 .icon-img {
-            width: 28px;
-            height: 28px;
-            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
         }
         
         .nav-actions .icon-img {
@@ -102,7 +102,7 @@
                 {% else %}
             <a href="{% url 'login' %}">Iniciar sesión</a>
             {% endif %}
-            <a href="{% url 'carrito_ver' %}">🛒 Carrito
+            <a href="{% url 'carrito_ver' %}"><img src="{% static 'img/icons/Carrito.png' %}" alt="Carrito" class="icon-img"> Carrito
                 {% if request.session.carrito %}
                 <span style="background:#e74c3c; border-radius:999px; padding:.1rem .45rem; font-size:.75rem;">{{ request.session.carrito|length }}</span>
                 {% endif %}
@@ -112,7 +112,7 @@
 
     <!-- Sidebar lateral desplegable -->
     <div class="sidebar" id="sidebar">
-        <h3>📋 Módulos del Sistema</h3>
+        <h3> Secciones </h3>
 
         <ul class="sidebar-menu">
             <li>
@@ -125,11 +125,11 @@
 
         <!-- MÓDULO: GESTIÓN CLÍNICA (Disponible para TODOS los usuarios logueados) -->
         <details class="sidebar-group">
-            <summary><span class="icon">🩺</span> Gestión Clínica <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/GestionClinica.png' %}" alt="Gestión Clínica" class="icon-img"> Gestión Clínica <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'propietario_list' %}"><img src="{% static 'img/icons/Propietario.png' %}" alt="Propietarios" class="icon-img"> Propietarios</a></li>
                 <li><a href="{% url 'pacientes_list' %}"><img src="{% static 'img/icons/PacienteAnimal.png' %}" alt="Pacientes" class="icon-img"> Pacientes</a></li>
-                <li><a href="{% url 'cita_calendario' %}"><span class="icon">📅</span> Calendario de Citas</a></li>
+                <li><a href="{% url 'cita_calendario' %}"><img src="{% static 'img/icons/Calendario.png' %}" alt="Calendario" class="icon-img"> Calendario de Citas</a></li>
                 <li><a href="{% url 'datosconsulta_list' %}"><img src="{% static 'img/icons/Consultas.png' %}" alt="Consultas" class="icon-img"> Consultas</a></li>
                 <li><a href="{% url 'historialclinico_list' %}"><img src="{% static 'img/icons/HistorialMedico.png' %}" alt="Historiales Clínicos" class="icon-img"> Historiales Clínicos</a></li>
                 <li><a href="{% url 'vacuna_list' %}"><img src="{% static 'img/icons/Vacunas.png' %}" alt="Vacunas" class="icon-img"> Vacunas</a></li>
@@ -141,18 +141,18 @@
 
         <!-- MÓDULO: CATÁLOGO E INVENTARIO (Disponible para TODOS los usuarios logueados) -->
         <details class="sidebar-group">
-            <summary><span class="icon">🗂️</span> Catálogo e Inventario <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/Catalogo.png' %}" alt="Catálogo e Inventario" class="icon-img"> Catálogo e Inventario <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'servicio_list' %}"><img src="{% static 'img/icons/Servicios.png' %}" alt="Servicios" class="icon-img"> Servicios</a></li>
                 <li><a href="{% url 'producto_list' %}"><img src="{% static 'img/icons/Productos.png' %}" alt="Productos" class="icon-img"> Productos</a></li>
                 <li><a href="{% url 'inventario_list' %}"><img src="{% static 'img/icons/Inventario.png' %}" alt="Inventario" class="icon-img"> Inventario</a></li>
-                <li><a href="{% url 'movimientos_inventario' %}"><span class="icon">🔄</span> Movimientos {% if nav_badges.movimientos_recent_count > 0 %}<span class="badge badge-info">{{ nav_badges.movimientos_recent_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'movimientos_inventario' %}"><img src="{% static 'img/icons/Movimientos.png' %}" alt="Movimientos" class="icon-img"> Movimientos {% if nav_badges.movimientos_recent_count > 0 %}<span class="badge badge-info">{{ nav_badges.movimientos_recent_count }}</span>{% endif %}</a></li>
             </ul>
         </details>
 
         <!-- MÓDULO: VENTAS (Disponible para TODOS los usuarios logueados) -->
         <details class="sidebar-group">
-            <summary><span class="icon">💰</span> Ventas <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/Ventas-seccion.png' %}" alt="Ventas" class="icon-img"> Ventas <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'tienda_productos' %}"><img src="{% static 'img/icons/Tienda.png' %}" alt="Tienda" class="icon-img"> Tienda</a></li>
                 <li><a href="{% url 'carrito_ver' %}"><img src="{% static 'img/icons/Carrito.png' %}" alt="Carrito" class="icon-img"> Carrito</a></li>
@@ -164,11 +164,11 @@
         <!-- MÓDULO: REPORTES (Solo para STAFF y ADMINISTRADORES) -->
         {% if user.is_staff or user.is_superuser %}
         <details class="sidebar-group">
-            <summary><span class="icon">📈</span> Reportes <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/Reportes.png' %}" alt="Reportes" class="icon-img"> Reportes <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'productos_bajo_stock' %}"><span class="icon">⚠️</span> Stock Bajo {% if nav_badges.low_stock_count > 0 %}<span class="badge badge-low">{{ nav_badges.low_stock_count }}</span>{% endif %}</a></li>
                 <li><a href="{% url 'productos_caducidad' %}"><span class="icon">⏳</span> Caducidad {% if nav_badges.exp_count > 0 %}<span class="badge badge-soon">{{ nav_badges.exp_count }}</span>{% endif %}</a></li>
-                <li><a href="{% url 'reporte_mas_vendidos' %}"><span class="icon">🏆</span> Más Vendidos</a></li>
+                <li><a href="{% url 'reporte_mas_vendidos' %}"><img src="{% static 'img/icons/Tendencia.png' %}" alt="Más Vendidos" class="icon-img"> Más Vendidos</a></li>
             </ul>
         </details>
         {% endif %}
@@ -198,7 +198,7 @@
                     {% if user.is_superuser %}
                         👑 Administrador
                     {% elif user.is_staff %}
-                        💼 Staff
+                        <img src="{% static 'img/icons/Staff.png' %}" alt="Staff" class="icon-img"> Staff
                     {% else %}
                         👤 Usuario Normal
                     {% endif %}
