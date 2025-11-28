@@ -117,7 +117,7 @@
         <ul class="sidebar-menu">
             <li>
                 <a href="{% url 'index' %}">
-                    <span class="icon">🏠</span>
+                    <img src="{% static 'img/icons/Inicio.png' %}" alt="Inicio" class="icon-img">
                     Inicio
                 </a>
             </li>
@@ -127,15 +127,15 @@
         <details class="sidebar-group">
             <summary><span class="icon">🩺</span> Gestión Clínica <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'propietario_list' %}"><span class="icon">👤</span> Propietarios</a></li>
-                <li><a href="{% url 'pacientes_list' %}"><span class="icon">🐕</span> Pacientes</a></li>
+                <li><a href="{% url 'propietario_list' %}"><img src="{% static 'img/icons/Propietario.png' %}" alt="Propietarios" class="icon-img"> Propietarios</a></li>
+                <li><a href="{% url 'pacientes_list' %}"><img src="{% static 'img/icons/PacienteAnimal.png' %}" alt="Pacientes" class="icon-img"> Pacientes</a></li>
                 <li><a href="{% url 'cita_calendario' %}"><span class="icon">📅</span> Calendario de Citas</a></li>
-                <li><a href="{% url 'datosconsulta_list' %}"><span class="icon">🩺</span> Consultas</a></li>
-                <li><a href="{% url 'historialclinico_list' %}"><span class="icon">📋</span> Historiales Clínicos</a></li>
-                <li><a href="{% url 'vacuna_list' %}"><span class="icon">💉</span> Vacunas</a></li>
-                <li><a href="{% url 'vacunacion_list' %}"><span class="icon">📝</span> Vacunaciones</a></li>
-                <li><a href="{% url 'aseomascotas_list' %}"><span class="icon">🛁</span> Aseo de Mascotas</a></li>
-                <li><a href="{% url 'hotel_list' %}"><span class="icon">🏨</span> Hotel</a></li>
+                <li><a href="{% url 'datosconsulta_list' %}"><img src="{% static 'img/icons/Consultas.png' %}" alt="Consultas" class="icon-img"> Consultas</a></li>
+                <li><a href="{% url 'historialclinico_list' %}"><img src="{% static 'img/icons/HistorialMedico.png' %}" alt="Historiales Clínicos" class="icon-img"> Historiales Clínicos</a></li>
+                <li><a href="{% url 'vacuna_list' %}"><img src="{% static 'img/icons/Vacunas.png' %}" alt="Vacunas" class="icon-img"> Vacunas</a></li>
+                <li><a href="{% url 'vacunacion_list' %}"><img src="{% static 'img/icons/Vacunaciones.png' %}" alt="Vacunaciones" class="icon-img"> Vacunaciones</a></li>
+                <li><a href="{% url 'aseomascotas_list' %}"><img src="{% static 'img/icons/AseoVeterinario.png' %}" alt="Aseo de Mascotas" class="icon-img"> Aseo de Mascotas</a></li>
+                <li><a href="{% url 'hotel_list' %}"><img src="{% static 'img/icons/HotelMascotas.png' %}" alt="Hotel" class="icon-img"> Hotel</a></li>
             </ul>
         </details>
 
@@ -143,9 +143,9 @@
         <details class="sidebar-group">
             <summary><span class="icon">🗂️</span> Catálogo e Inventario <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'servicio_list' %}"><span class="icon">🔧</span> Servicios</a></li>
-                <li><a href="{% url 'producto_list' %}"><span class="icon">📦</span> Productos</a></li>
-                <li><a href="{% url 'inventario_list' %}"><span class="icon">📊</span> Inventario</a></li>
+                <li><a href="{% url 'servicio_list' %}"><img src="{% static 'img/icons/Servicios.png' %}" alt="Servicios" class="icon-img"> Servicios</a></li>
+                <li><a href="{% url 'producto_list' %}"><img src="{% static 'img/icons/Productos.png' %}" alt="Productos" class="icon-img"> Productos</a></li>
+                <li><a href="{% url 'inventario_list' %}"><img src="{% static 'img/icons/Inventario.png' %}" alt="Inventario" class="icon-img"> Inventario</a></li>
                 <li><a href="{% url 'movimientos_inventario' %}"><span class="icon">🔄</span> Movimientos {% if nav_badges.movimientos_recent_count > 0 %}<span class="badge badge-info">{{ nav_badges.movimientos_recent_count }}</span>{% endif %}</a></li>
             </ul>
         </details>
@@ -154,10 +154,10 @@
         <details class="sidebar-group">
             <summary><span class="icon">💰</span> Ventas <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'tienda_productos' %}"><span class="icon">🛍️</span> Tienda</a></li>
-                <li><a href="{% url 'carrito_ver' %}"><span class="icon">🧺</span> Carrito</a></li>
-                <li><a href="{% url 'factura_list' %}"><span class="icon">🧾</span> Facturas</a></li>
-                <li><a href="{% url 'pago_list' %}"><span class="icon">💳</span> Pagos</a></li>
+                <li><a href="{% url 'tienda_productos' %}"><img src="{% static 'img/icons/Tienda.png' %}" alt="Tienda" class="icon-img"> Tienda</a></li>
+                <li><a href="{% url 'carrito_ver' %}"><img src="{% static 'img/icons/Carrito.png' %}" alt="Carrito" class="icon-img"> Carrito</a></li>
+                <li><a href="{% url 'factura_list' %}"><img src="{% static 'img/icons/Facturas.png' %}" alt="Facturas" class="icon-img"> Facturas</a></li>
+                <li><a href="{% url 'pago_list' %}"><img src="{% static 'img/icons/Pagos.png' %}" alt="Pagos" class="icon-img"> Pagos</a></li>
             </ul>
         </details>
 
@@ -178,7 +178,7 @@
         <details class="sidebar-group">
             <summary><span class="icon">⚙️</span> Administración <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'empleado_list' %}"><span class="icon">👨‍⚕️</span> Empleados</a></li>
+                <li><a href="{% url 'empleado_list' %}"><img src="{% static 'img/icons/Empleado.png' %}" alt="Empleados" class="icon-img"> Empleados</a></li>
                 
                 <!-- OPCIONES SOLO PARA SUPERUSUARIOS -->
                 {% if user.is_superuser %}

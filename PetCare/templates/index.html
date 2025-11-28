@@ -53,16 +53,76 @@
             </a>
             - Servicios veterinarios
         </li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'producto_list' %}" class="btn btn-primary">📦 Productos</a> - Productos disponibles</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'inventario_list' %}" class="btn btn-primary">📊 Inventario</a> - Control de inventario</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'vacuna_list' %}" class="btn btn-primary">💉 Vacunas</a> - Catálogo de vacunas</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'vacunacion_list' %}" class="btn btn-primary">📝 Vacunaciones</a> - Registro de vacunaciones</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'historialclinico_list' %}" class="btn btn-primary">📋 Historiales Clínicos</a> - Historial médico</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'datosconsulta_list' %}" class="btn btn-primary">🩺 Consultas</a> - Consultas veterinarias</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'aseomascotas_list' %}" class="btn btn-primary">🛁 Aseos</a> - Servicio de aseo</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'hotel_list' %}" class="btn btn-primary">🏨 Hotel</a> - Hotel para mascotas</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'factura_list' %}" class="btn btn-primary">🧾 Facturas</a> - Facturación</li>
-        <li style="margin: 0.5rem 0;"><a href="{% url 'pago_list' %}" class="btn btn-primary">💳 Pagos</a> - Registro de pagos</li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'producto_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Productos.png' %}" alt="Productos" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Productos
+            </a>
+            - Productos disponibles
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'inventario_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Inventario.png' %}" alt="Inventario" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Inventario
+            </a>
+            - Control de inventario
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'vacuna_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Vacunas.png' %}" alt="Vacunas" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Vacunas
+            </a>
+            - Catálogo de vacunas
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'vacunacion_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Vacunaciones.png' %}" alt="Vacunaciones" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Vacunaciones
+            </a>
+            - Registro de vacunaciones
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'historialclinico_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/HistorialMedico.png' %}" alt="Historiales Clínicos" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Historiales Clínicos
+            </a>
+            - Historial médico
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'datosconsulta_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Consultas.png' %}" alt="Consultas" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Consultas
+            </a>
+            - Consultas veterinarias
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'aseomascotas_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/AseoVeterinario.png' %}" alt="Aseos" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Aseos
+            </a>
+            - Servicio de aseo
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'hotel_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/HotelMascotas.png' %}" alt="Hotel" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Hotel
+            </a>
+            - Hotel para mascotas
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'factura_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Facturas.png' %}" alt="Facturas" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Facturas
+            </a>
+            - Facturación
+        </li>
+        <li style="margin: 0.5rem 0;">
+            <a href="{% url 'pago_list' %}" class="btn btn-primary">
+                <img src="{% static 'img/icons/Pagos.png' %}" alt="Pagos" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;">
+                Pagos
+            </a>
+            - Registro de pagos
+        </li>
     </ul>
 </div>
 {% endblock %}
