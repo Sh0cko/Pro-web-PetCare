@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Eliminar Cita{% endblock %}
 {% block content %}
-<h2>🗑️ Eliminar Cita</h2>
+<h2>Eliminar Cita</h2>
 
 <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:1.25rem; margin:1.5rem 0;">
     <p style="margin:0 0 .75rem; font-weight:600;">¿Está seguro que desea eliminar esta cita?</p>
@@ -17,7 +17,7 @@
 
 <form method="post" style="display:inline;">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">🗑️ Sí, eliminar cita</button>
-    <a href="{% url 'cita_calendario' %}" class="btn btn-secondary">← Cancelar</a>
+    <button type="submit" class="btn btn-danger">Sí, eliminar cita</button>
+    <a href="{% url 'cita_calendario' %}" class="btn btn-secondary">Cancelar</a>
 </form>
 {% endblock %}

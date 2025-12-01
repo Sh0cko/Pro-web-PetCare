@@ -39,7 +39,7 @@ body:before { background:
 .nav-actions a, .nav-actions button { font-size:.85rem; font-weight:600; border:none; cursor:pointer; text-decoration:none; padding:.55rem .95rem; border-radius:var(--radius-sm); background:var(--color-blue); color:#fff; display:inline-flex; align-items:center; gap:.35rem; transition:var(--transition); }
 .nav-actions a:hover, .nav-actions button:hover { filter:brightness(1.1); }
 
-.sidebar { position:fixed; top:64px; left:0; bottom:0; width:250px; background:var(--color-bg-dark); color:#fff; overflow-y:auto; padding:1rem .75rem 3rem; box-shadow:var(--shadow-sm); }
+.sidebar { position:fixed; top:64px; left:0; bottom:0; width:250px; background:var(--color-bg-dark); color:#fff; overflow-y:auto; padding:1rem .75rem 3rem; box-shadow:var(--shadow-sm); transition:var(--transition); }
 .sidebar h3 { font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; opacity:.7; margin:.75rem .5rem .35rem; }
 .sidebar ul { list-style:none; margin:0; padding:0; }
 .sidebar li a { display:flex; align-items:center; gap:.6rem; padding:.55rem .7rem; border-radius:var(--radius-sm); font-size:.9rem; color:#fff; text-decoration:none; transition:var(--transition); }
@@ -56,9 +56,15 @@ details.sidebar-group ul { padding:.35rem .45rem .6rem; }
 details.sidebar-group ul li a { font-size:.78rem; padding:.45rem .6rem; }
 @media (max-width:900px){ details.sidebar-group ul li a { font-size:.85rem; } }
 
-.main { margin-left:250px; padding:88px 2rem 3rem; }
-@media (max-width:900px){ .sidebar { transform:translateX(-100%); transition:var(--transition); } body.sidebar-open .sidebar { transform:none; } .main { margin-left:0; } .menu-toggle { display:inline-flex; } }
-.menu-toggle { background:var(--color-bg-darker); color:#fff; border:none; border-radius:var(--radius-sm); padding:.6rem .85rem; margin-right:.75rem; cursor:pointer; font-size:1.15rem; display:none; }
+.main { margin-left:250px; padding:88px 2rem 3rem; transition:var(--transition); }
+/* Retractable sidebar: when body has .sidebar-open, hide sidebar and expand content */
+body.sidebar-open .sidebar { transform:translateX(-100%); }
+body.sidebar-open .main { margin-left:0; }
+/* Overlay for mobile when sidebar is open */
+.sidebar-overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:var(--transition); z-index:90; }
+.sidebar-overlay.active { opacity:1; pointer-events:auto; }
+@media (max-width:900px){ .sidebar { transform:translateX(-100%); } body.sidebar-open .sidebar { transform:none; } .main { margin-left:0; } .menu-toggle { display:inline-flex; } }
+.menu-toggle { background:var(--color-bg-darker); color:#fff; border:none; border-radius:var(--radius-sm); padding:.6rem .85rem; margin-right:.75rem; cursor:pointer; font-size:1.15rem; display:inline-flex; align-items:center; justify-content:center; }
 
 .card { background:var(--color-card); border-radius:var(--radius-md); padding:1.5rem 1.75rem; box-shadow:var(--shadow-md); margin-bottom:1.75rem; }
 .card-header { background:var(--color-bg-dark); color:#fff; padding:1rem 1.25rem; border-radius:var(--radius-md) var(--radius-md) 0 0; font-weight:600; font-size:1.05rem; }

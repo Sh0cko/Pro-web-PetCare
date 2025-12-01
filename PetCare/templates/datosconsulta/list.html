@@ -8,7 +8,7 @@
 
 <form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:560px;">
     <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, mascota, motivo o diagnóstico" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
-    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
+    <button class="btn btn-primary" type="submit">Buscar</button>
     {% if q %}<a href="{% url 'datosconsulta_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
 </form>
 

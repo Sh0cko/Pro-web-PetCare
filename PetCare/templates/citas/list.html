@@ -2,10 +2,10 @@
 {% block title %}Listado de Citas{% endblock %}
 {% block content %}
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-    <h2>📋 Listado de Citas</h2>
+    <h2>Listado de Citas</h2>
     <div style="display:flex; gap:.5rem;">
-        <a href="{% url 'cita_calendario' %}" class="btn btn-primary">📅 Calendario</a>
-        <a href="{% url 'cita_create' %}" class="btn btn-success">➕ Nueva Cita</a>
+        <a href="{% url 'cita_calendario' %}" class="btn btn-primary">Calendario</a>
+        <a href="{% url 'cita_create' %}" class="btn btn-success">Nueva Cita</a>
     </div>
 </div>
 
@@ -17,8 +17,8 @@
         <option value="{{ cod }}" {% if estado == cod %}selected{% endif %}>{{ nombre }}</option>
         {% endfor %}
     </select>
-    <button class="btn btn-primary" type="submit">🔍 Buscar</button>
-    {% if q or estado %}<a href="{% url 'cita_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+    <button class="btn btn-primary" type="submit">Buscar</button>
+    {% if q or estado %}<a href="{% url 'cita_list' %}" class="btn btn-secondary">Limpiar</a>{% endif %}
 </form>
 
 <div class="table-wrapper">

@@ -166,8 +166,8 @@
         <details class="sidebar-group">
             <summary><img src="{% static 'img/icons/Reportes.png' %}" alt="Reportes" class="icon-img"> Reportes <span class="chev">▾</span></summary>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'productos_bajo_stock' %}"><span class="icon">⚠️</span> Stock Bajo {% if nav_badges.low_stock_count > 0 %}<span class="badge badge-low">{{ nav_badges.low_stock_count }}</span>{% endif %}</a></li>
-                <li><a href="{% url 'productos_caducidad' %}"><span class="icon">⏳</span> Caducidad {% if nav_badges.exp_count > 0 %}<span class="badge badge-soon">{{ nav_badges.exp_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'productos_bajo_stock' %}"><img src="{% static 'img/icons/StockBajo.png' %}" alt="Stock Bajo" class="icon-img"> Stock Bajo {% if nav_badges.low_stock_count > 0 %}<span class="badge badge-low">{{ nav_badges.low_stock_count }}</span>{% endif %}</a></li>
+                <li><a href="{% url 'productos_caducidad' %}"><img src="{% static 'img/icons/Caducidad.png' %}" alt="Caducidad" class="icon-img"> Caducidad {% if nav_badges.exp_count > 0 %}<span class="badge badge-soon">{{ nav_badges.exp_count }}</span>{% endif %}</a></li>
                 <li><a href="{% url 'reporte_mas_vendidos' %}"><img src="{% static 'img/icons/Tendencia.png' %}" alt="Más Vendidos" class="icon-img"> Más Vendidos</a></li>
             </ul>
         </details>
@@ -193,6 +193,7 @@
         <!-- INDICADOR DE TIPO DE USUARIO -->
         <div class="user-type-indicator">
             {% if user.is_authenticated %}
+                <div style="font-weight: 600; margin-bottom: .5rem; color: #fff;">Tipo de usuario</div>
                 <div class="user-badge 
                     {% if user.is_superuser %}user-admin{% elif user.is_staff %}user-staff{% else %}user-normal{% endif %}">
                     {% if user.is_superuser %}
@@ -200,7 +201,7 @@
                     {% elif user.is_staff %}
                         <img src="{% static 'img/icons/Staff.png' %}" alt="Staff" class="icon-img"> Staff
                     {% else %}
-                        👤 Usuario Normal
+                        <img src="{% static 'img/icons/Cliente.png' %}" alt="Usuario" class="icon-img"> Usuario Normal
                     {% endif %}
                 </div>
             {% endif %}

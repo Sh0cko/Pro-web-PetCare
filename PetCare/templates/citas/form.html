@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}{% if cita %}Editar Cita{% else %}Nueva Cita{% endif %}{% endblock %}
 {% block content %}
-<h2>{% if cita %}✏️ Editar Cita #{{ cita.id }}{% else %}➕ Nueva Cita{% endif %}</h2>
+<h2>{% if cita %}Editar Cita #{{ cita.id }}{% else %}Nueva Cita{% endif %}</h2>
 
 <form method="post" style="max-width:900px;">
     {% csrf_token %}
@@ -81,9 +81,9 @@
 
     <div class="form-actions">
         <button type="submit" class="btn {% if cita %}btn-warning{% else %}btn-success{% endif %}">
-            {% if cita %}💾 Actualizar{% else %}➕ Crear Cita{% endif %}
+            {% if cita %}Actualizar{% else %}Crear Cita{% endif %}
         </button>
-        <a href="{% url 'cita_calendario' %}" class="btn btn-secondary">← Volver</a>
+        <a href="{% url 'cita_calendario' %}" class="btn btn-secondary">Volver</a>
     </div>
 </form>
 {% endblock %}
