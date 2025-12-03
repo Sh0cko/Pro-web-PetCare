@@ -29,7 +29,7 @@ DEBUG = False  # was True
 
 # Para deployment, agrega los hosts/dominios permitidos.
 # Ejemplos: 'localhost', '127.0.0.1', 'tu-dominio.com', 'render.com', 'railway.app'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app', 'petcare.itt.mx', '.petcare.itt.mx']  # añade tu dominio real aquí
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app']  # añade tu dominio real aquí
 
 
 # Application definition
@@ -206,3 +206,9 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# CSRF Trusted Origins para Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://pro-web-petcare-production.up.railway.app',
+    'https://*.railway.app',  # Permite todos los subdominios de Railway
+]
