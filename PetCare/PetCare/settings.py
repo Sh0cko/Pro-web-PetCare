@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,23 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Read from environment; falls back to dev key only if not provided.
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-mb^z49#7d*vs!9s_9t@nj@n%oynwe=hzbzp5^l6xm1skrvdstr')
+SECRET_KEY = 'django-insecure-mb^z49#7d*vs!9s_9t@nj@n%oynwe=hzbzp5^l6xm1skrvdstr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
+# Para deployment, cambia a False. Si necesitas volver a dev, ponlo en True otra vez.
+DEBUG = False  # was True
 
-# Hosts allowed in production (comma-separated env or default empty)
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') if os.getenv('DJANGO_ALLOWED_HOSTS') else []
-
-# CSRF trusted origins (required when using HTTPS or a reverse proxy)
-CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS') else []
-
-# ----- Development defaults (do not remove; useful for quick local runs) -----
-# SECRET_KEY = 'django-insecure-mb^z49#7d*vs!9s_9t@nj@n%oynwe=hzbzp5^l6xm1skrvdstr'
-# DEBUG = True
-# ALLOWED_HOSTS = []
-# CSRF_TRUSTED_ORIGINS = []
+# Para deployment, agrega los hosts/dominios permitidos.
+# Ejemplos: 'localhost', '127.0.0.1', 'tu-dominio.com', 'render.com', 'railway.app'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # añade tu dominio real aquí
 
 
 # Application definition
@@ -54,7 +45,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # Enable WhiteNoise to serve static files in production (optional, can rely on Nginx instead)
+    # Static files en producción (Whitenoise): habilita servir static sin Nginx
+    # Nota: instala primero `pip install whitenoise`
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -92,30 +84,17 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', 'petcare_database'),
-        'USER': os.getenv('DB_USER', 'petcare-administrator'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'root123'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'petcare_database',
+        'USER': 'petcare-administrator',
+        'PASSWORD': 'root123',
+        'HOST': 'localhost',
+        'PORT': '5432',
         'OPTIONS': {
             'client_encoding': 'UTF8',
         },
     }
 }
-
-# Development database example (commented for safety):
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'petcare_database',
-#         'USER': 'petcare-administrator',
-#         'PASSWORD': 'root123',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#         'OPTIONS': { 'client_encoding': 'UTF8' },
-#     }
-# }
 
 # NAME: petcare_database,
 # USER': petcare-administrator,          
@@ -163,18 +142,9 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Where collectstatic will place files for production serving
+# Para deployment: ubicación donde collectstatic guardará los archivos.
+# Ejecuta `python manage.py collectstatic` y servidos por tu servidor web (Nginx) o plataforma.
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# WhiteNoise static files compression/storage
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
-
-# Development static alternative (if you ever want to disable WhiteNoise):
-# Remove WhiteNoise middleware above and use Nginx to serve STATIC_ROOT.
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -212,14 +182,31 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Optional: do NOT refresh the expiry on every request (keeps behavior predictable)
 SESSION_SAVE_EVERY_REQUEST = False
 
-# Security best practices for production
-SECURE_SSL_REDIRECT = os.getenv('DJANGO_SECURE_SSL_REDIRECT', 'False').lower() in ('1', 'true', 'yes')
-SECURE_HSTS_SECONDS = int(os.getenv('DJANGO_SECURE_HSTS_SECONDS', '0'))
-SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False').lower() in ('1', 'true', 'yes')
-SECURE_HSTS_PRELOAD = os.getenv('DJANGO_SECURE_HSTS_PRELOAD', 'False').lower() in ('1', 'true', 'yes')
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = os.getenv('DJANGO_SESSION_COOKIE_SECURE', 'False').lower() in ('1', 'true', 'yes')
-CSRF_COOKIE_SECURE = os.getenv('DJANGO_CSRF_COOKIE_SECURE', 'False').lower() in ('1', 'true', 'yes')
-X_FRAME_OPTIONS = 'DENY'
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
+# --- Opciones de seguridad recomendadas para producción (comentadas para tu primer deploy). ---
+# Cuando tengas el dominio en HTTPS, quita comentarios:
+# SECURE_SSL_REDIRECT = True            # redirige todo a HTTPS
+# SESSION_COOKIE_SECURE = True          # cookies solo por HTTPS
+# CSRF_COOKIE_SECURE = True             # CSRF cookie solo por HTTPS
+# SECURE_HSTS_SECONDS = 31536000        # HSTS 1 año
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+
+# Cabeceras de seguridad (puedes activarlas luego):
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_BROWSER_XSS_FILTER = True  # obsoleto en algunos navegadores
+# X_FRAME_OPTIONS = 'DENY'
+
+# Logging simple en producción (útil para ver errores sin consola de dev)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

@@ -1,0 +1,22 @@
+/* Shared background paw animation for auth pages */
+.paw-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.paw-layer.paws-top { filter: blur(0.25px) saturate(1.15); opacity: .34; }
+.paw-layer.paws-mid { filter: blur(0.6px) saturate(1.1); opacity: .24; }
+.paw-layer.paws-back { filter: blur(1.2px) saturate(1.05); opacity: .16; }
+
+.paw { position: absolute; width: 48px; height: 48px; animation: pawFloat linear infinite; will-change: transform, opacity; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; top: -120px; opacity: 0; animation-fill-mode: both; }
+
+@keyframes pawFloat {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  5%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10%  { transform: translateY(20px) rotate(45deg); opacity: .9; }
+  90%  { opacity: .9; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.login-bg-gradient { position: fixed; inset: 0; z-index: 0; background:
+  radial-gradient(1200px 600px at 10% 0%, rgba(255,255,255,.12), transparent 60%),
+  radial-gradient(1200px 600px at 90% 100%, rgba(0,0,0,.08), transparent 55%);
+}
+
+@media (prefers-reduced-motion: reduce) { .paw { animation: none; opacity: .12; } }
