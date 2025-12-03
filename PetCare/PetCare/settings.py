@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mb^z49#7d*vs!9s_9t@nj@n%oynwe=hzbzp5^l6xm1skrvdstr'
+# Read from environment; falls back to dev key only if not provided.
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-mb^z49#7d*vs!9s_9t@nj@n%oynwe=hzbzp5^l6xm1skrvdstr')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = []
+# Hosts allowed in production (comma-separated env or default empty)
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') if os.getenv('DJANGO_ALLOWED_HOSTS') else []
+
+# CSRF trusted origins (required when using HTTPS or a reverse proxy)
+CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS') else []
+
+# ----- Development defaults (do not remove; useful for quick local runs) -----
+# SECRET_KEY = 'django-insecure-mb^z49#7d*vs!9s_9t@nj@n%oynwe=hzbzp5^l6xm1skrvdstr'
+# DEBUG = True
+# ALLOWED_HOSTS = []
+# CSRF_TRUSTED_ORIGINS = []
 
 
 # Application definition
@@ -42,6 +54,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Enable WhiteNoise to serve static files in production (optional, can rely on Nginx instead)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,17 +92,30 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'petcare_database',
-        'USER': 'petcare-administrator',
-        'PASSWORD': 'root123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', 'petcare_database'),
+        'USER': os.getenv('DB_USER', 'petcare-administrator'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'root123'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
             'client_encoding': 'UTF8',
         },
     }
 }
+
+# Development database example (commented for safety):
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'petcare_database',
+#         'USER': 'petcare-administrator',
+#         'PASSWORD': 'root123',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#         'OPTIONS': { 'client_encoding': 'UTF8' },
+#     }
+# }
 
 # NAME: petcare_database,
 # USER': petcare-administrator,          
@@ -136,6 +163,19 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+# Where collectstatic will place files for production serving
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise static files compression/storage
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# Development static alternative (if you ever want to disable WhiteNoise):
+# Remove WhiteNoise middleware above and use Nginx to serve STATIC_ROOT.
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -165,3 +205,21 @@ LOGIN_EXEMPT_URLS = [
 
 # Email backend para desarrollo (mostrar emails por consola)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Session behavior: expire when the browser closes so users must log in again
+# https://docs.djangoproject.com/en/stable/topics/http/sessions/#browser-length-sessions
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# Optional: do NOT refresh the expiry on every request (keeps behavior predictable)
+SESSION_SAVE_EVERY_REQUEST = False
+
+# Security best practices for production
+SECURE_SSL_REDIRECT = os.getenv('DJANGO_SECURE_SSL_REDIRECT', 'False').lower() in ('1', 'true', 'yes')
+SECURE_HSTS_SECONDS = int(os.getenv('DJANGO_SECURE_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False').lower() in ('1', 'true', 'yes')
+SECURE_HSTS_PRELOAD = os.getenv('DJANGO_SECURE_HSTS_PRELOAD', 'False').lower() in ('1', 'true', 'yes')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = os.getenv('DJANGO_SESSION_COOKIE_SECURE', 'False').lower() in ('1', 'true', 'yes')
+CSRF_COOKIE_SECURE = os.getenv('DJANGO_CSRF_COOKIE_SECURE', 'False').lower() in ('1', 'true', 'yes')
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True

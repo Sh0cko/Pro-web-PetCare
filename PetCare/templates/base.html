@@ -87,9 +87,7 @@
     
     <!-- Barra de navegación superior -->
     <div class="navbar">
-        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
-            
-        </button>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
         <h1><img src="{% static 'img/icons/Patitas-removebg.png' %}" alt="" class="icon-img"> PetCare - Sistema de Gestión Veterinaria</h1>
         <div class="nav-actions">
                 {% if user.is_authenticated %}
@@ -228,20 +226,31 @@
     <script>
         // Función para abrir/cerrar el sidebar
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             const body = document.body;
-            
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-            body.classList.toggle('sidebar-open');
+            const isMobile = window.innerWidth <= 900;
+
+            if (isMobile) {
+                // Mobile: toggle open state and overlay
+                body.classList.toggle('sidebar-open');
+                const opened = body.classList.contains('sidebar-open');
+                overlay.classList.toggle('active', opened);
+            } else {
+                // Desktop: collapse/expand without overlay
+                body.classList.toggle('sidebar-collapsed');
+                overlay.classList.remove('active');
+            }
         }
 
         // Cerrar el sidebar cuando se hace clic en un enlace (en móviles)
         document.querySelectorAll('.sidebar-menu a').forEach(link => {
             link.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    toggleSidebar();
+                if (window.innerWidth <= 900) {
+                    // Close sidebar after navigation on mobile
+                    const body = document.body;
+                    const overlay = document.getElementById('sidebarOverlay');
+                    body.classList.remove('sidebar-open');
+                    overlay.classList.remove('active');
                 }
             });
         });
