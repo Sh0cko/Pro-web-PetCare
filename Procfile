@@ -1,1 +1,1 @@
-web: gunicorn PetCare.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+web: cd PetCare && gunicorn PetCare.wsgi:application --bind 0.0.0.0:$PORT --workers 2

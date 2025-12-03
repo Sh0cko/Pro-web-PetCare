@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +29,7 @@ DEBUG = False  # was True
 
 # Para deployment, agrega los hosts/dominios permitidos.
 # Ejemplos: 'localhost', '127.0.0.1', 'tu-dominio.com', 'render.com', 'railway.app'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # añade tu dominio real aquí
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app']  # añade tu dominio real aquí
 
 
 # Application definition
@@ -85,11 +86,11 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'petcare_database',
-        'USER': 'petcare-administrator',
-        'PASSWORD': 'root123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('PGDATABASE', 'petcare_database'),
+        'USER': os.environ.get('PGUSER', 'petcare-administrator'),
+        'PASSWORD': os.environ.get('PGPASSWORD', 'root123'),
+        'HOST': os.environ.get('PGHOST', 'localhost'),
+        'PORT': os.environ.get('PGPORT', '5432'),
         'OPTIONS': {
             'client_encoding': 'UTF8',
         },
