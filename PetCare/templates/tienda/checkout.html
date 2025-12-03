@@ -3,20 +3,20 @@
 {% block title %}Finalizar Compra - PetCare{% endblock %}
 
 {% block content %}
-<h2>💳 Finalizar Compra</h2>
+<h2> Finalizar Compra</h2>
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
     <!-- Resumen de la compra -->
     <div>
         <div style="background-color: white; border-radius: 8px; padding: 1.5rem;">
             <h3 style="border-bottom: 2px solid #1abc9c; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                📦 Resumen de la Compra
+                 Resumen de la Compra
             </h3>
             
             {% for item in items_carrito %}
             <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #eee;">
                 <div>
-                    <strong>{% if item.tipo == 'servicio' %}🧰{% else %}📦{% endif %} {{ item.obj.nombre }}</strong><br>
+                    <strong>{% if item.tipo == 'servicio' %}{% else %}{% endif %} {{ item.obj.nombre }}</strong><br>
                     <small style="color: #7f8c8d;">Cantidad: {{ item.cantidad }} x ${{ item.precio }}</small>
                 </div>
                 <div style="font-weight: bold; color: #27ae60;">
@@ -38,7 +38,7 @@
     <div>
         <div style="background-color: white; border-radius: 8px; padding: 1.5rem;">
             <h3 style="border-bottom: 2px solid #1abc9c; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                📝 Información de Pago
+                 Información de Pago
             </h3>
             
             <form method="post" action="{% url 'procesar_pago' %}">
@@ -61,16 +61,16 @@
                     <label for="metodo_pago">Método de Pago *</label>
                     <select id="metodo_pago" name="metodo_pago" required>
                         <option value="">Seleccione método de pago</option>
-                        <option value="Efectivo">💵 Efectivo</option>
-                        <option value="Tarjeta de Crédito">💳 Tarjeta de Crédito</option>
-                        <option value="Tarjeta de Débito">💳 Tarjeta de Débito</option>
-                        <option value="Transferencia">🏦 Transferencia Bancaria</option>
-                        <option value="PayPal">💰 PayPal</option>
+                        <option value="Efectivo"> Efectivo</option>
+                        <option value="Tarjeta de Crédito"> Tarjeta de Crédito</option>
+                        <option value="Tarjeta de Débito"> Tarjeta de Débito</option>
+                        <option value="Transferencia"> Transferencia Bancaria</option>
+                        <option value="PayPal"> PayPal</option>
                     </select>
                 </div>
                 
                 <div style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 1rem; margin: 1.5rem 0;">
-                    <strong>⚠️ Importante:</strong>
+                    <strong> Importante:</strong>
                     <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
                         <li>Verifique que la información sea correcta</li>
                         <li>Una vez procesado el pago, se generará una factura</li>
@@ -80,7 +80,7 @@
                 
                 <div class="form-actions" style="display: flex; gap: 1rem;">
                     <button type="submit" class="btn btn-success" style="flex: 1; font-size: 1.1rem; padding: 0.75rem;">
-                        ✅ Confirmar y Pagar
+                         Confirmar y Pagar
                     </button>
                     <a href="{% url 'carrito_ver' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
                         ← Volver al Carrito

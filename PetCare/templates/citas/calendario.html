@@ -5,9 +5,9 @@
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
     <h2>Calendario de Citas - {{ month_name }} {{ year }}</h2>
     <div style="display:flex; gap:.75rem;">
-        <a href="?year={{ mes_anterior.year }}&month={{ mes_anterior.month }}" class="btn btn-secondary">◀ Anterior</a>
+        <a href="?year={{ mes_anterior.year }}&month={{ mes_anterior.month }}" class="btn btn-secondary"> Anterior</a>
         <a href="?year={{ hoy.year }}&month={{ hoy.month }}" class="btn btn-primary">Hoy</a>
-        <a href="?year={{ mes_siguiente.year }}&month={{ mes_siguiente.month }}" class="btn btn-secondary">Siguiente ▶</a>
+        <a href="?year={{ mes_siguiente.year }}&month={{ mes_siguiente.month }}" class="btn btn-secondary">Siguiente </a>
         <a href="{% url 'cita_create' %}" class="btn btn-success"> Nueva Cita</a>
         <a href="{% url 'cita_list' %}" class="btn btn-secondary"> Lista</a>
     </div>

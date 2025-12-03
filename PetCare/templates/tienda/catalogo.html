@@ -3,17 +3,17 @@
 {% block title %}Tienda - PetCare{% endblock %}
 
 {% block content %}
-<h2>🛒 Tienda de Productos y Servicios</h2>
+<h2> Tienda de Productos y Servicios</h2>
 <p>Selecciona los productos y/o servicios que deseas comprar</p>
 
 <div style="text-align: right; margin-bottom: 1rem;">
     <a href="{% url 'carrito_ver' %}" class="btn btn-primary">
-        🛍️ Ver Carrito
+         Ver Carrito
     </a>
 </div>
 
 {% if productos %}
-<h3 style="margin-top: 1rem;">📦 Productos</h3>
+<h3 style="margin-top: 1rem;"> Productos</h3>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 0.5rem;">
     {% for producto in productos %}
     <div style="background-color: white; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -29,9 +29,9 @@
             </div>
             <div style="color: #7f8c8d; margin-top: 0.5rem;">
                 {% if producto.cantidad > 0 %}
-                    <span style="color: #27ae60;">✓ En stock: {{ producto.cantidad }} unidades</span>
+                    <span style="color: #27ae60;"> En stock: {{ producto.cantidad }} unidades</span>
                 {% else %}
-                    <span style="color: #e74c3c;">✗ Sin stock</span>
+                    <span style="color: #e74c3c;"> Sin stock</span>
                 {% endif %}
             </div>
         </div>
@@ -50,7 +50,7 @@
                        style="width: 80px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
             </div>
             <button type="submit" class="btn btn-success" style="width: 100%;">
-                🛒 Agregar al Carrito
+                 Agregar al Carrito
             </button>
         </form>
         {% else %}
@@ -67,7 +67,7 @@
 </div>
 {% endif %}
 
-<h3 style="margin-top: 2rem;">🧰 Servicios</h3>
+<h3 style="margin-top: 2rem;"> Servicios</h3>
 {% if servicios %}
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 0.5rem;">
     {% for servicio in servicios %}
@@ -91,7 +91,7 @@
                        style="width: 80px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
             </div>
             <button type="submit" class="btn btn-success" style="width: 100%;">
-                ➕ Agregar Servicio
+                 Agregar Servicio
             </button>
         </form>
     </div>

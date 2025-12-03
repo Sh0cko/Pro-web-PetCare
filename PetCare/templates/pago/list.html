@@ -4,12 +4,12 @@
 
 {% block content %}
 <h2>Listado de Pagos</h2>
-<a href="{% url 'pago_create' %}" class="btn btn-success">➕ Nuevo Pago</a>
+<a href="{% url 'pago_create' %}" class="btn btn-success"> Nuevo Pago</a>
 
 <form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:560px;">
     <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, propietario o método" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
     <button class="btn btn-primary" type="submit">Buscar</button>
-    {% if q %}<a href="{% url 'pago_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+    {% if q %}<a href="{% url 'pago_list' %}" class="btn btn-secondary"> Limpiar</a>{% endif %}
 </form>
 
 <div class="table-wrapper">
@@ -33,8 +33,8 @@
             <td>${{ pago.monto|default:"0.00" }}</td>
             <td>{{ pago.metodo|default:"N/A" }}</td>
             <td>
-                <a href="{% url 'pago_update' pago.id_pago %}" class="btn btn-warning">✏️ Editar</a>
-                <a href="{% url 'pago_delete' pago.id_pago %}" class="btn btn-danger">🗑️ Eliminar</a>
+                <a href="{% url 'pago_update' pago.id_pago %}" class="btn btn-warning"> Editar</a>
+                <a href="{% url 'pago_delete' pago.id_pago %}" class="btn btn-danger"> Eliminar</a>
             </td>
         </tr>
         {% empty %}

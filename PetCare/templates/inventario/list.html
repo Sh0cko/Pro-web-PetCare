@@ -4,12 +4,12 @@
 
 {% block content %}
 <h2>Listado de Inventario</h2>
-<a href="{% url 'inventario_create' %}" class="btn btn-success">➕ Nuevo Item</a>
+<a href="{% url 'inventario_create' %}" class="btn btn-success"> Nuevo Item</a>
 
 <form method="get" style="margin:1rem 0; display:flex; gap:.5rem; max-width:520px;">
     <input type="text" name="q" value="{{ q }}" placeholder="Buscar por ID, nombre o descripción" style="flex:1; padding:.55rem .7rem; border:1px solid #ccc; border-radius:6px;">
     <button class="btn btn-primary" type="submit">Buscar</button>
-    {% if q %}<a href="{% url 'inventario_list' %}" class="btn btn-secondary">✖ Limpiar</a>{% endif %}
+    {% if q %}<a href="{% url 'inventario_list' %}" class="btn btn-secondary"> Limpiar</a>{% endif %}
 </form>
 
 <div class="table-wrapper">
@@ -35,8 +35,8 @@
             <td>${{ inventario.precio|default:"0.00" }}</td>
             <td>{{ inventario.fecha_actualizacion|date:"d/m/Y H:i"|default:"N/A" }}</td>
             <td>
-                <a href="{% url 'inventario_update' inventario.id_producto %}" class="btn btn-warning">✏️ Editar</a>
-                <a href="{% url 'inventario_delete' inventario.id_producto %}" class="btn btn-danger">🗑️ Eliminar</a>
+                <a href="{% url 'inventario_update' inventario.id_producto %}" class="btn btn-warning"> Editar</a>
+                <a href="{% url 'inventario_delete' inventario.id_producto %}" class="btn btn-danger"> Eliminar</a>
             </td>
         </tr>
         {% empty %}

@@ -3,7 +3,7 @@
 {% block title %}Carrito de Compras - PetCare{% endblock %}
 
 {% block content %}
-<h2>🛍️ Carrito de Compras</h2>
+<h2> Carrito de Compras</h2>
 
 {% if items_carrito %}
 <div style="background-color: white; border-radius: 8px; padding: 1.5rem; margin-top: 1rem;">
@@ -22,7 +22,7 @@
             <tr>
                 <td>
                     <strong>
-                        {% if item.tipo == 'servicio' %}🧰{% else %}📦{% endif %}
+                        {% if item.tipo == 'servicio' %}{% else %}{% endif %}
                         {{ item.obj.nombre }}
                     </strong><br>
                     <small style="color: #7f8c8d;">
@@ -59,7 +59,7 @@
                     {% endif %}
                        class="btn btn-danger"
                        onclick="return confirm('¿Eliminar este producto del carrito?')">
-                        🗑️ Eliminar
+                         Eliminar
                     </a>
                 </td>
             </tr>
@@ -82,22 +82,22 @@
             <a href="{% url 'carrito_vaciar' %}" 
                class="btn btn-danger"
                onclick="return confirm('¿Vaciar todo el carrito?')">
-                🗑️ Vaciar Carrito
+                 Vaciar Carrito
             </a>
         </div>
         <div>
             <a href="{% url 'checkout' %}" class="btn btn-success" style="font-size: 1.1rem; padding: 0.75rem 2rem;">
-                💳 Proceder al Pago
+                 Proceder al Pago
             </a>
         </div>
     </div>
 </div>
 {% else %}
 <div style="text-align: center; padding: 3rem; background-color: white; border-radius: 8px; margin-top: 2rem;">
-    <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
+    <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
     <h3 style="color: #7f8c8d; margin-bottom: 1rem;">Tu carrito está vacío</h3>
     <a href="{% url 'tienda_productos' %}" class="btn btn-primary">
-        🛒 Ir a la Tienda
+         Ir a la Tienda
     </a>
 </div>
 {% endif %}

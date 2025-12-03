@@ -88,7 +88,7 @@
     <!-- Barra de navegación superior -->
     <div class="navbar">
         <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
-            ☰
+            
         </button>
         <h1><img src="{% static 'img/icons/Patitas-removebg.png' %}" alt="" class="icon-img"> PetCare - Sistema de Gestión Veterinaria</h1>
         <div class="nav-actions">
@@ -125,7 +125,7 @@
 
         <!-- MÓDULO: GESTIÓN CLÍNICA (Disponible para TODOS los usuarios logueados) -->
         <details class="sidebar-group">
-            <summary><img src="{% static 'img/icons/GestionClinica.png' %}" alt="Gestión Clínica" class="icon-img"> Gestión Clínica <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/GestionClinica.png' %}" alt="Gestión Clínica" class="icon-img"> Gestión Clínica <span class="chev"></span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'propietario_list' %}"><img src="{% static 'img/icons/Propietario.png' %}" alt="Propietarios" class="icon-img"> Propietarios</a></li>
                 <li><a href="{% url 'pacientes_list' %}"><img src="{% static 'img/icons/PacienteAnimal.png' %}" alt="Pacientes" class="icon-img"> Pacientes</a></li>
@@ -141,7 +141,7 @@
 
         <!-- MÓDULO: CATÁLOGO E INVENTARIO (Disponible para TODOS los usuarios logueados) -->
         <details class="sidebar-group">
-            <summary><img src="{% static 'img/icons/Catalogo.png' %}" alt="Catálogo e Inventario" class="icon-img"> Catálogo e Inventario <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/Catalogo.png' %}" alt="Catálogo e Inventario" class="icon-img"> Catálogo e Inventario <span class="chev"></span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'servicio_list' %}"><img src="{% static 'img/icons/Servicios.png' %}" alt="Servicios" class="icon-img"> Servicios</a></li>
                 <li><a href="{% url 'producto_list' %}"><img src="{% static 'img/icons/Productos.png' %}" alt="Productos" class="icon-img"> Productos</a></li>
@@ -152,7 +152,7 @@
 
         <!-- MÓDULO: VENTAS (Disponible para TODOS los usuarios logueados) -->
         <details class="sidebar-group">
-            <summary><img src="{% static 'img/icons/Ventas-seccion.png' %}" alt="Ventas" class="icon-img"> Ventas <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/Ventas-seccion.png' %}" alt="Ventas" class="icon-img"> Ventas <span class="chev"></span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'tienda_productos' %}"><img src="{% static 'img/icons/Tienda.png' %}" alt="Tienda" class="icon-img"> Tienda</a></li>
                 <li><a href="{% url 'carrito_ver' %}"><img src="{% static 'img/icons/Carrito.png' %}" alt="Carrito" class="icon-img"> Carrito</a></li>
@@ -164,7 +164,7 @@
         <!-- MÓDULO: REPORTES (Solo para STAFF y ADMINISTRADORES) -->
         {% if user.is_staff or user.is_superuser %}
         <details class="sidebar-group">
-            <summary><img src="{% static 'img/icons/Reportes.png' %}" alt="Reportes" class="icon-img"> Reportes <span class="chev">▾</span></summary>
+            <summary><img src="{% static 'img/icons/Reportes.png' %}" alt="Reportes" class="icon-img"> Reportes <span class="chev"></span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'productos_bajo_stock' %}"><img src="{% static 'img/icons/StockBajo.png' %}" alt="Stock Bajo" class="icon-img"> Stock Bajo {% if nav_badges.low_stock_count > 0 %}<span class="badge badge-low">{{ nav_badges.low_stock_count }}</span>{% endif %}</a></li>
                 <li><a href="{% url 'productos_caducidad' %}"><img src="{% static 'img/icons/Caducidad.png' %}" alt="Caducidad" class="icon-img"> Caducidad {% if nav_badges.exp_count > 0 %}<span class="badge badge-soon">{{ nav_badges.exp_count }}</span>{% endif %}</a></li>
@@ -176,15 +176,15 @@
         <!-- MÓDULO: ADMINISTRACIÓN (Solo para STAFF y ADMINISTRADORES) -->
         {% if user.is_staff or user.is_superuser %}
         <details class="sidebar-group">
-            <summary><span class="icon">⚙️</span> Administración <span class="chev">▾</span></summary>
+            <summary><span class="icon"></span> Administración <span class="chev"></span></summary>
             <ul class="sidebar-menu">
                 <li><a href="{% url 'empleado_list' %}"><img src="{% static 'img/icons/Empleado.png' %}" alt="Empleados" class="icon-img"> Empleados</a></li>
                 
                 <!-- OPCIONES SOLO PARA SUPERUSUARIOS -->
                 {% if user.is_superuser %}
-                <li><a href="{% url 'gestionar_usuarios' %}"><span class="icon">👥</span> Gestionar Usuarios</a></li>
-                <li><a href="{% url 'registrar_admin' %}"><span class="icon">👑</span> Crear Administrador</a></li>
-                <li><a href="/admin/" target="_blank"><span class="icon">⚙️</span> Panel Admin Django</a></li>
+                <li><a href="{% url 'gestionar_usuarios' %}"><span class="icon"></span> Gestionar Usuarios</a></li>
+                <li><a href="{% url 'registrar_admin' %}"><span class="icon"></span> Crear Administrador</a></li>
+                <li><a href="/admin/" target="_blank"><span class="icon"></span> Panel Admin Django</a></li>
                 {% endif %}
             </ul>
         </details>
@@ -197,7 +197,7 @@
                 <div class="user-badge 
                     {% if user.is_superuser %}user-admin{% elif user.is_staff %}user-staff{% else %}user-normal{% endif %}">
                     {% if user.is_superuser %}
-                        👑 Administrador
+                         Administrador
                     {% elif user.is_staff %}
                         <img src="{% static 'img/icons/Staff.png' %}" alt="Staff" class="icon-img"> Staff
                     {% else %}
